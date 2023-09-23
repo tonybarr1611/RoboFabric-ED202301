@@ -2,8 +2,51 @@
 
 using namespace std;
 
+struct Nodo;
+struct ListaSimple;
+struct Cola;
+
+ListaSimple SepararStringsPorTabs(string);
+
 //Estructuras 
+
+struct Cola{
+    Nodo *primerNodo;
+    Nodo *ultimoNodo;
+
+    Cola(){
+        primerNodo = NULL;
+    }
+
+    void imprimir(){
+        Nodo *tmp = primerNodo;
+        while(tmp != NULL){
+            tmp->imprimir();
+            tmp = tmp -> siguiente;
+        }
+    }
+
+    void encolar(Nodo *nuevo){
+        if(primerNodo == NULL)
+            primerNodo = nuevo;
+        else
+            ultimoNodo -> siguiente = nuevo;
+        ultimoNodo = nuevo;
+    }
+
+    Nodo *desencolar(){
+        Nodo *tmp = primerNodo;
+        primerNodo = primerNodo -> siguiente;
+        return tmp;
+    }
+
+    Nodo *peek(){
+        return primerNodo;
+    }
+};
+
 struct Nodo {
+    // TODO Verificar tipo de dato que se va a guardar
     string dato;
     Nodo *siguiente;
 
@@ -15,6 +58,10 @@ struct Nodo {
     Nodo(string _dato) {
         dato = _dato;
         siguiente = NULL;
+    }
+
+    void imprimir() {
+        cout << dato << "\t";
     }
 
 };
@@ -46,6 +93,9 @@ struct ListaSimple{
         }
     }
 };
+
+
+
 //Funciones
 
 ListaSimple SepararStringsPorTabs(string linea) {
