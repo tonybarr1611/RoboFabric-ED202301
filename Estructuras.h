@@ -8,13 +8,14 @@ struct ListaSimple;
 struct ListaCompleja;
 struct Cola;
 
-ListaSimple SepararStringsPorTabs(string linea);
+ListaSimple *SepararStringsPorTabs(string linea);
+ListaCompleja *SepararStringsPorLineas(string linea, string tipo);
 
 //Estructuras 
 struct NodoSimple {
     // NodoSimple es un nodo de ListaSimple
     string dato;
-    NodoSimple *siguiente;
+    NodoSimple *siguiente = NULL;
 
     NodoSimple() {
         dato = "";
@@ -32,24 +33,25 @@ struct NodoSimple {
     }
 
     void imprimir() {
-        cout << dato << "\t";
+        cout << dato << "\n";
     }
 
 };
 
 struct ListaSimple{
     // ListaSimple consiste de una lista de strings
-    NodoSimple * primerNodo;
-    NodoSimple * ultimoNodo;
+    NodoSimple * primerNodo = NULL;
+    NodoSimple * ultimoNodo = NULL;
 
     ListaSimple(){
         primerNodo = NULL;
+        ultimoNodo = NULL;
     }
 
     void imprimir(){
         NodoSimple * tmp = primerNodo;
         while(tmp != NULL){
-            cout <<tmp -> dato<< "\n";
+            tmp -> imprimir();
             tmp = tmp -> siguiente;
         }
     }
@@ -102,7 +104,7 @@ struct NodoComplejo{
     }
 
     void imprimir(){
-        cout << tipo << "\t";
+        cout << "Lista tipo: " << tipo << "\n";
         lista -> imprimir();
     }
 
@@ -132,6 +134,7 @@ struct ListaCompleja{
 
     void imprimir(){
         NodoComplejo * tmp = primerNodo;
+        int i = 0;
         while(tmp != NULL){
             tmp -> imprimir();
             tmp = tmp -> siguiente;
@@ -210,20 +213,44 @@ struct Cola{
 
 //Funciones
 
-ListaSimple SepararStringsPorTabs(string linea) {
-    ListaSimple lista; // Crear una instancia de ListaSimple
+ListaSimple *SepararStringsPorTabs(string linea) {
+    ListaSimple *lista = new ListaSimple(); // Crear una instancia de ListaSimple
     string dato = "";
 
     for (int i = 0; i < linea.length(); i++) {
         if (linea[i] == '\t') {
-            lista.agregar(dato); // Agregar el dato a la lista
+            lista->agregar(dato); // Agregar el dato a la lista
+            dato = "";
+        } else {
+            dato += linea[i];
+        }
+    }
+    lista->agregar(dato); // Agregar el último dato
+    return lista;
+}
+
+ListaCompleja *SepararStringsPorLineas(string linea, string tipo){
+    // Toma un string y lo separa por saltos de línea, cada línea se convierte en una lista simple que se pasa por SepararStringsPorTabs
+    ListaCompleja *listaCompleja = new ListaCompleja();
+    listaCompleja->tipo = tipo;
+    NodoComplejo *nodoActual = new NodoComplejo(tipo);
+    string dato = "";
+
+    for (int i = 0; i < linea.length(); i++) {
+        if (linea[i] == '\n') {
+            ListaSimple *listaSimple = SepararStringsPorTabs(dato);
+            nodoActual->lista = listaSimple;
+            listaCompleja->agregar(nodoActual);
+            nodoActual = new NodoComplejo(tipo);
             dato = "";
         } else {
             dato += linea[i];
         }
     }
 
-    lista.agregar(dato); // Agregar el último dato
-    return lista;
-}
+    ListaSimple *listaSimple = SepararStringsPorTabs(dato);
+    nodoActual->lista = listaSimple;
+    listaCompleja->agregar(nodoActual);
 
+    return listaCompleja;
+}
