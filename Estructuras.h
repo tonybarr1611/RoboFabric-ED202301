@@ -7,6 +7,11 @@ struct NodoComplejo;
 struct ListaSimple;
 struct ListaCompleja;
 struct Cola;
+struct Producto;
+struct Constructor;
+
+//Declaraciones de Funciones
+
 
 ListaSimple *SepararStringsPorTabs(string linea);
 ListaCompleja *SepararStringsPorLineas(string linea, string tipo);
@@ -66,6 +71,19 @@ struct ListaSimple{
             ultimoNodo = nuevo;
         }
     }
+
+    int Buscar(string dato){
+        NodoSimple * tmp = primerNodo;
+        int i = 0;
+        while(tmp != NULL){
+            if(tmp->dato == dato){
+                return i;
+            }
+            tmp = tmp -> siguiente;
+            i++;
+        }
+        return -1;
+    }
 };
 
 struct NodoComplejo{
@@ -111,6 +129,7 @@ struct NodoComplejo{
     void agregar(string dato){
         lista -> agregar(dato);
     }
+    
 };
 
 struct ListaCompleja{
@@ -172,6 +191,20 @@ struct ListaCompleja{
             nodo -> siguiente -> anterior = nodo -> anterior;
         }
         return nodo;
+    }
+
+    NodoComplejo* Buscar(string dato){
+        //Busca el dato en alguna de la listas, retorna la lista que lo contiene o NULL si no lo encuentra
+        //Se puede usar para los clientes y productos al tener un unico nombre indicativo de la lista
+        NodoComplejo * tmp = primerNodo;
+        while(tmp != NULL){
+            if(tmp->lista->Buscar(dato)==0){
+                return tmp;
+            }
+            tmp = tmp -> siguiente;
+        }
+        cout << "No se encontro el dato" << "\n";
+        return NULL;
     }
 };
 
@@ -254,3 +287,85 @@ ListaCompleja *SepararStringsPorLineas(string linea, string tipo){
 
     return listaCompleja;
 }
+
+struct Producto{
+    string codigo;
+    int cantidadAlmacenada;
+    int tiempoDeElboracion;
+    string categoria;
+    string ubicacion;
+
+    //constructores
+    Producto(){
+        codigo = "";
+        cantidadAlmacenada = 0;
+        tiempoDeElboracion = 0;
+        categoria = "";
+        ubicacion = "";}
+    
+    Producto(string codigo, int cantidadAlmacenada, int tiempoDeElboracion, string categoria, string ubicacion){
+        this->codigo = codigo;
+        this->cantidadAlmacenada = cantidadAlmacenada;
+        this->tiempoDeElboracion = tiempoDeElboracion;
+        this->categoria = categoria;
+        this->ubicacion = ubicacion;
+    }
+        
+    void imprimir(){
+        cout << "Codigo: " << codigo << "\n";
+        cout << "Cantidad Almacenada: " << cantidadAlmacenada << "\n";
+        cout << "Tiempo de Elaboracion: " << tiempoDeElboracion << "\n";
+        cout << "Categoria: " << categoria << "\n";
+        cout << "Ubicacion: " << ubicacion << "\n";
+
+    }
+
+    ListaSimple* ConvertirEnListaSimple(){
+        ListaSimple *lista = new ListaSimple();
+        lista->agregar(codigo);
+        lista->agregar(to_string(cantidadAlmacenada));
+        lista->agregar(to_string(tiempoDeElboracion));
+        lista->agregar(categoria);
+        lista->agregar(ubicacion);
+        return lista;}
+
+    
+    };
+
+struct Constructor{
+    string Nombre; // Nombre ejemplo: Constructor 1
+    int Estado; //Apagado = 0, Encendido = 1, En proceso = 2
+    string Codigo; // Codigo del producto que esta elaborando
+
+    //constructor
+    Constructor(){
+        Nombre = "";
+        Estado = 0;
+        Codigo = "";
+    }
+
+    Constructor(string Nombre, int Estado, string Codigo){
+        this->Nombre = Nombre;
+        this->Estado = Estado;
+        this->Codigo = Codigo;
+    }
+
+    //Metodos
+
+    void imprimir(){
+        cout << "Constructor: " << Nombre << "\n";
+        cout << "Estado: " << Estado << "\n";
+        cout << "Codigo: " << Codigo << "\n";
+    }
+
+    void AgregarCantidadAlProducto(ListaCompleja * listaDeProductos){
+        //Se determina la posicion del producto en la lista de productos
+        NodoComplejo* tmp = listaDeProductos->Buscar(Codigo);
+        int cantidadAlmacenada= stoi(tmp -> lista -> primerNodo -> siguiente -> dato) + 1;
+        tmp -> lista -> primerNodo -> siguiente -> dato = to_string(cantidadAlmacenada);
+
+    }
+
+};
+
+//Funciones 
