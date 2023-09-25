@@ -244,50 +244,6 @@ struct Cola{
     }
 };
 
-//Funciones
-
-ListaSimple *SepararStringsPorTabs(string linea) {
-    ListaSimple *lista = new ListaSimple(); // Crear una instancia de ListaSimple
-    string dato = "";
-
-    for (int i = 0; i < linea.length(); i++) {
-        if (linea[i] == '\t') {
-            lista->agregar(dato); // Agregar el dato a la lista
-            dato = "";
-        } else {
-            dato += linea[i];
-        }
-    }
-    lista->agregar(dato); // Agregar el último dato
-    return lista;
-}
-
-ListaCompleja *SepararStringsPorLineas(string linea, string tipo){
-    // Toma un string y lo separa por saltos de línea, cada línea se convierte en una lista simple que se pasa por SepararStringsPorTabs
-    ListaCompleja *listaCompleja = new ListaCompleja();
-    listaCompleja->tipo = tipo;
-    NodoComplejo *nodoActual = new NodoComplejo(tipo);
-    string dato = "";
-
-    for (int i = 0; i < linea.length(); i++) {
-        if (linea[i] == '\n') {
-            ListaSimple *listaSimple = SepararStringsPorTabs(dato);
-            nodoActual->lista = listaSimple;
-            listaCompleja->agregar(nodoActual);
-            nodoActual = new NodoComplejo(tipo);
-            dato = "";
-        } else {
-            dato += linea[i];
-        }
-    }
-
-    ListaSimple *listaSimple = SepararStringsPorTabs(dato);
-    nodoActual->lista = listaSimple;
-    listaCompleja->agregar(nodoActual);
-
-    return listaCompleja;
-}
-
 struct Producto{
     string codigo;
     int cantidadAlmacenada;
@@ -368,4 +324,47 @@ struct Constructor{
 
 };
 
-//Funciones 
+
+//Funciones
+
+ListaSimple *SepararStringsPorTabs(string linea) {
+    ListaSimple *lista = new ListaSimple(); // Crear una instancia de ListaSimple
+    string dato = "";
+
+    for (int i = 0; i < linea.length(); i++) {
+        if (linea[i] == '\t') {
+            lista->agregar(dato); // Agregar el dato a la lista
+            dato = "";
+        } else {
+            dato += linea[i];
+        }
+    }
+    lista->agregar(dato); // Agregar el último dato
+    return lista;
+}
+
+ListaCompleja *SepararStringsPorLineas(string linea, string tipo){
+    // Toma un string y lo separa por saltos de línea, cada línea se convierte en una lista simple que se pasa por SepararStringsPorTabs
+    ListaCompleja *listaCompleja = new ListaCompleja();
+    listaCompleja->tipo = tipo;
+    NodoComplejo *nodoActual = new NodoComplejo(tipo);
+    string dato = "";
+
+    for (int i = 0; i < linea.length(); i++) {
+        if (linea[i] == '\n') {
+            ListaSimple *listaSimple = SepararStringsPorTabs(dato);
+            nodoActual->lista = listaSimple;
+            listaCompleja->agregar(nodoActual);
+            nodoActual = new NodoComplejo(tipo);
+            dato = "";
+        } else {
+            dato += linea[i];
+        }
+    }
+
+    ListaSimple *listaSimple = SepararStringsPorTabs(dato);
+    nodoActual->lista = listaSimple;
+    listaCompleja->agregar(nodoActual);
+
+    return listaCompleja;
+}
