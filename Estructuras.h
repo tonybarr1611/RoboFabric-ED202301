@@ -202,6 +202,14 @@ struct ListaCompleja{
         agregar(new NodoComplejo(dato, lista));
     }
 
+    void agregar(ListaCompleja * lista){
+        while (lista->primerNodo != NULL){
+            agregar(lista->primerNodo);
+            lista->primerNodo = lista->primerNodo->siguiente;
+        }
+    }
+
+
     NodoComplejo * eliminar(NodoComplejo * nodo){
         if(nodo == primerNodo){
             primerNodo = primerNodo -> siguiente;
@@ -214,6 +222,16 @@ struct ListaCompleja{
             nodo -> siguiente -> anterior = nodo -> anterior;
         }
         return nodo;
+    }
+
+    int lenLista(){
+        NodoComplejo * tmp = primerNodo;
+        int i = 0;
+        while(tmp != NULL){
+            tmp = tmp -> siguiente;
+            i++;
+        }
+        return i;
     }
 
     NodoComplejo* Buscar(string dato){
@@ -409,18 +427,19 @@ ListaCompleja *LeerArchivo(ListaSimple *listaArchivos, string tipoLista){
     ListaCompleja *listaCompleja = new ListaCompleja();
     listaCompleja->tipo = tipoLista;
     NodoSimple *tmp = listaArchivos->primerNodo;
-    // TODO revisar error al dar una lista con muchos nodos
-    // De todos los nodos anteriores a ultimoNodo, solo revisa la primera linea y revisa bien solo el ultimo
-    for(int i = 0; i < listaArchivos->lenLista(); i++){
+    while(tmp != NULL){
         string path = tmp->dato;
         ifstream archivo(path);
         string linea;
         string contenido = "";
         while(getline(archivo, linea)){
-            contenido += linea + "\n";
+            if (contenido == "")
+                contenido += linea;
+            else
+                contenido += "\n" + linea;
         }
         ListaCompleja *lista = SepararStringsPorLineas(contenido, tipoLista);
-        listaCompleja->agregar(lista->primerNodo);
+        listaCompleja->agregar(lista);
         tmp = tmp->siguiente;
     }
     return listaCompleja;
@@ -435,6 +454,6 @@ ListaCompleja *LeerArchivo(string directorio, string tipoArchivo, string tipoLis
 ListaCompleja *LeerArchivo(NodoSimple *NodoArchivo, string tipoLista){
     // Toma un nodo de archivos, lee el archivo y devuelve una lista de listas con los datos del archivo
     ListaSimple *lista = new ListaSimple();
-    lista->agregar(NodoArchivo);
+    lista->agregar(NodoArchivo->dato);
     return LeerArchivo(lista, tipoLista);
 }

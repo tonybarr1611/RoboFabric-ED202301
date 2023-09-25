@@ -35,5 +35,8 @@ int main(int argc, char** argv) {
         nodo = nodo->siguiente;
         cout << "-----------------------------------" << endl;
     }
+    cout << "----------------------------------------------------------------------------------" << endl;
+    ListaCompleja *ListaProductosArchivo = LeerArchivo("Clientes", "txt", "Cliente");
+    ListaProductosArchivo->imprimir();
     return 0;
 }
