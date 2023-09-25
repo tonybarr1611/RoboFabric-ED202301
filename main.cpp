@@ -24,7 +24,16 @@ int main(int argc, char** argv) {
     constructor->AgregarCantidadAlProducto(listaDeProductos);
     listaDeProductos->imprimir();
     cout << "----------------------------------------------------------------------------------" << endl;
-    ListaSimple *ListaClientesArchivo = LeerDirectorio("Clientes", "xlsx");
+    ListaSimple *ListaClientesArchivo = LeerDirectorio("Clientes", "txt");
     ListaClientesArchivo->imprimir();
+    cout << "----------------------------------------------------------------------------------" << endl;
+    NodoSimple *nodo = ListaClientesArchivo->primerNodo;
+    while (nodo != NULL){
+        cout << nodo->dato << endl;
+        ListaCompleja *ListaClientes = LeerArchivo(nodo, "Cliente");
+        ListaClientes->imprimir();
+        nodo = nodo->siguiente;
+        cout << "-----------------------------------" << endl;
+    }
     return 0;
 }
