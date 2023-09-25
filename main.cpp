@@ -23,8 +23,8 @@ int main(int argc, char** argv) {
     Constructor * constructor = new Constructor("C1", 0, "101");
     constructor->AgregarCantidadAlProducto(listaDeProductos);
     listaDeProductos->imprimir();
-
-
-
-
+    cout << "----------------------------------------------------------------------------------" << endl;
+    ListaSimple *ListaClientesArchivo = LeerDirectorio("Clientes", "xlsx");
+    ListaClientesArchivo->imprimir();
+    return 0;
 }

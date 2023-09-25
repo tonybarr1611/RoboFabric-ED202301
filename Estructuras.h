@@ -1,6 +1,8 @@
 #include <iostream>
+#include <filesystem>
 
 using namespace std;
+namespace fs = std::filesystem;
 
 struct NodoSimple;
 struct NodoComplejo;
@@ -367,4 +369,16 @@ ListaCompleja *SepararStringsPorLineas(string linea, string tipo){
     listaCompleja->agregar(nodoActual);
 
     return listaCompleja;
+}
+
+ListaSimple *LeerDirectorio(string directorio, string tipoArchivo){
+    // Toma un directorio, direccion relativa, y devuelve una lista de todos los archivos que sean del tipo especificado
+    ListaSimple *lista = new ListaSimple();
+    tipoArchivo = "." + tipoArchivo;
+    for (const auto & entry : fs::directory_iterator(directorio)){
+        string path = entry.path().string();
+        if(path.substr(path.length() - tipoArchivo.length(), path.length()) == tipoArchivo)
+            lista->agregar(path);
+    }
+    return lista;
 }
