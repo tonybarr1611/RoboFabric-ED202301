@@ -23,8 +23,20 @@ int main(int argc, char** argv) {
     Constructor * constructor = new Constructor("C1", 0, "101");
     constructor->AgregarCantidadAlProducto(listaDeProductos);
     listaDeProductos->imprimir();
-
-
-
-
+    cout << "----------------------------------------------------------------------------------" << endl;
+    ListaSimple *ListaClientesArchivo = LeerDirectorio("Clientes", "txt");
+    ListaClientesArchivo->imprimir();
+    cout << "----------------------------------------------------------------------------------" << endl;
+    NodoSimple *nodo = ListaClientesArchivo->primerNodo;
+    while (nodo != NULL){
+        cout << nodo->dato << endl;
+        ListaCompleja *ListaClientes = LeerArchivo(nodo, "Cliente");
+        ListaClientes->imprimir();
+        nodo = nodo->siguiente;
+        cout << "-----------------------------------" << endl;
+    }
+    cout << "----------------------------------------------------------------------------------" << endl;
+    ListaCompleja *ListaProductosArchivo = LeerArchivo("Clientes", "txt", "Cliente");
+    ListaProductosArchivo->imprimir();
+    return 0;
 }

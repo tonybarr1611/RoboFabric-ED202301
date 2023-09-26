@@ -1,6 +1,9 @@
 #include <iostream>
+#include <filesystem>
+#include <fstream>
 
 using namespace std;
+namespace fs = std::filesystem;
 
 struct NodoSimple;
 struct NodoComplejo;
@@ -15,6 +18,10 @@ struct Constructor;
 
 ListaSimple *SepararStringsPorTabs(string linea);
 ListaCompleja *SepararStringsPorLineas(string linea, string tipo);
+ListaSimple *LeerDirectorio(string, string);
+ListaCompleja *LeerArchivo(string, string, string); // Directorio, tipo de archivo, tipo de lista
+ListaCompleja *LeerArchivo(ListaSimple*, string); // Lista de archivos, tipo de lista
+ListaCompleja *LeerArchivo(NodoSimple*, string); // Nodo de archivos, tipo de lista
 
 //Estructuras 
 struct NodoSimple {
@@ -61,8 +68,7 @@ struct ListaSimple{
         }
     }
 
-    void agregar(string dato){
-        NodoSimple * nuevo = new NodoSimple(dato);
+    void agregar(NodoSimple *nuevo){
         if(primerNodo == NULL){
             primerNodo = nuevo;
             ultimoNodo = nuevo;
@@ -70,6 +76,11 @@ struct ListaSimple{
             ultimoNodo -> siguiente = nuevo;
             ultimoNodo = nuevo;
         }
+    }
+
+    void agregar(string dato){
+        NodoSimple * nuevo = new NodoSimple(dato);
+        agregar(nuevo);
     }
 
     int Buscar(string dato){
@@ -83,6 +94,16 @@ struct ListaSimple{
             i++;
         }
         return -1;
+    }
+
+    int lenLista(){
+        NodoSimple * tmp = primerNodo;
+        int i = 0;
+        while(tmp != NULL){
+            tmp = tmp -> siguiente;
+            i++;
+        }
+        return i;
     }
 };
 
@@ -155,8 +176,10 @@ struct ListaCompleja{
         NodoComplejo * tmp = primerNodo;
         int i = 0;
         while(tmp != NULL){
+            cout << "Nodo " << i << "\n";
             tmp -> imprimir();
             tmp = tmp -> siguiente;
+            i++;
         }
     }
 
@@ -179,6 +202,14 @@ struct ListaCompleja{
         agregar(new NodoComplejo(dato, lista));
     }
 
+    void agregar(ListaCompleja * lista){
+        while (lista->primerNodo != NULL){
+            agregar(lista->primerNodo);
+            lista->primerNodo = lista->primerNodo->siguiente;
+        }
+    }
+
+
     NodoComplejo * eliminar(NodoComplejo * nodo){
         if(nodo == primerNodo){
             primerNodo = primerNodo -> siguiente;
@@ -191,6 +222,16 @@ struct ListaCompleja{
             nodo -> siguiente -> anterior = nodo -> anterior;
         }
         return nodo;
+    }
+
+    int lenLista(){
+        NodoComplejo * tmp = primerNodo;
+        int i = 0;
+        while(tmp != NULL){
+            tmp = tmp -> siguiente;
+            i++;
+        }
+        return i;
     }
 
     NodoComplejo* Buscar(string dato){
@@ -243,50 +284,6 @@ struct Cola{
         return primerNodo;
     }
 };
-
-//Funciones
-
-ListaSimple *SepararStringsPorTabs(string linea) {
-    ListaSimple *lista = new ListaSimple(); // Crear una instancia de ListaSimple
-    string dato = "";
-
-    for (int i = 0; i < linea.length(); i++) {
-        if (linea[i] == '\t') {
-            lista->agregar(dato); // Agregar el dato a la lista
-            dato = "";
-        } else {
-            dato += linea[i];
-        }
-    }
-    lista->agregar(dato); // Agregar el último dato
-    return lista;
-}
-
-ListaCompleja *SepararStringsPorLineas(string linea, string tipo){
-    // Toma un string y lo separa por saltos de línea, cada línea se convierte en una lista simple que se pasa por SepararStringsPorTabs
-    ListaCompleja *listaCompleja = new ListaCompleja();
-    listaCompleja->tipo = tipo;
-    NodoComplejo *nodoActual = new NodoComplejo(tipo);
-    string dato = "";
-
-    for (int i = 0; i < linea.length(); i++) {
-        if (linea[i] == '\n') {
-            ListaSimple *listaSimple = SepararStringsPorTabs(dato);
-            nodoActual->lista = listaSimple;
-            listaCompleja->agregar(nodoActual);
-            nodoActual = new NodoComplejo(tipo);
-            dato = "";
-        } else {
-            dato += linea[i];
-        }
-    }
-
-    ListaSimple *listaSimple = SepararStringsPorTabs(dato);
-    nodoActual->lista = listaSimple;
-    listaCompleja->agregar(nodoActual);
-
-    return listaCompleja;
-}
 
 struct Producto{
     string codigo;
@@ -368,4 +365,95 @@ struct Constructor{
 
 };
 
-//Funciones 
+
+//Funciones
+
+ListaSimple *SepararStringsPorTabs(string linea) {
+    ListaSimple *lista = new ListaSimple(); // Crear una instancia de ListaSimple
+    string dato = "";
+
+    for (int i = 0; i < linea.length(); i++) {
+        if (linea[i] == '\t') {
+            lista->agregar(dato); // Agregar el dato a la lista
+            dato = "";
+        } else {
+            dato += linea[i];
+        }
+    }
+    lista->agregar(dato); // Agregar el último dato
+    return lista;
+}
+
+ListaCompleja *SepararStringsPorLineas(string linea, string tipo){
+    // Toma un string y lo separa por saltos de línea, cada línea se convierte en una lista simple que se pasa por SepararStringsPorTabs
+    ListaCompleja *listaCompleja = new ListaCompleja();
+    listaCompleja->tipo = tipo;
+    NodoComplejo *nodoActual = new NodoComplejo(tipo);
+    string dato = "";
+
+    for (int i = 0; i < linea.length(); i++) {
+        if (linea[i] == '\n') {
+            ListaSimple *listaSimple = SepararStringsPorTabs(dato);
+            nodoActual->lista = listaSimple;
+            listaCompleja->agregar(nodoActual);
+            nodoActual = new NodoComplejo(tipo);
+            dato = "";
+        } else {
+            dato += linea[i];
+        }
+    }
+
+    ListaSimple *listaSimple = SepararStringsPorTabs(dato);
+    nodoActual->lista = listaSimple;
+    listaCompleja->agregar(nodoActual);
+
+    return listaCompleja;
+}
+
+ListaSimple *LeerDirectorio(string directorio, string tipoArchivo){
+    // Toma un directorio, direccion relativa, y devuelve una lista de todos los archivos que sean del tipo especificado
+    ListaSimple *lista = new ListaSimple();
+    tipoArchivo = "." + tipoArchivo;
+    for (const auto & entry : fs::directory_iterator(directorio)){
+        string path = entry.path().string();
+        if(path.substr(path.length() - tipoArchivo.length(), path.length()) == tipoArchivo)
+            lista->agregar(path);
+    }
+    return lista;
+}
+
+ListaCompleja *LeerArchivo(ListaSimple *listaArchivos, string tipoLista){
+    // Toma una lista de archivos, lee cada archivo y devuelve una lista de listas con los datos del archivo
+    ListaCompleja *listaCompleja = new ListaCompleja();
+    listaCompleja->tipo = tipoLista;
+    NodoSimple *tmp = listaArchivos->primerNodo;
+    while(tmp != NULL){
+        string path = tmp->dato;
+        ifstream archivo(path);
+        string linea;
+        string contenido = "";
+        while(getline(archivo, linea)){
+            if (contenido == "")
+                contenido += linea;
+            else
+                contenido += "\n" + linea;
+        }
+        ListaCompleja *lista = SepararStringsPorLineas(contenido, tipoLista);
+        listaCompleja->agregar(lista);
+        tmp = tmp->siguiente;
+    }
+    return listaCompleja;
+}
+
+ListaCompleja *LeerArchivo(string directorio, string tipoArchivo, string tipoLista){
+    // Toma un directorio, direccion relativa, lee el archivo y devuelve una lista de listas con los datos del archivo
+    ListaSimple *lista = LeerDirectorio(directorio, tipoArchivo);
+    return LeerArchivo(lista, tipoLista);
+}
+
+ListaCompleja *LeerArchivo(NodoSimple *NodoArchivo, string tipoLista){
+    // Toma un nodo de archivos, lee el archivo y devuelve una lista de listas con los datos del archivo
+    ListaSimple *lista = new ListaSimple();
+    lista->agregar(NodoArchivo->dato);
+    return LeerArchivo(lista, tipoLista);
+}
