@@ -1,6 +1,8 @@
 #include <iostream>
 #include <filesystem>
 #include <fstream>
+#include <thread>
+#include <chrono>
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -356,13 +358,16 @@ struct Constructor{
     }
 
     void AgregarCantidadAlProducto(ListaCompleja * listaDeProductos){
-        //Se determina la posicion del producto en la lista de productos
         NodoComplejo* tmp = listaDeProductos->Buscar(Codigo);
-        int cantidadAlmacenada= stoi(tmp -> lista -> primerNodo -> siguiente -> dato) + 1;
+        //Variables
+        int cantidadAlmacenada= stoi(tmp -> lista -> primerNodo -> siguiente -> dato);
+        int tiempoDeElboracion= stoi(tmp -> lista -> primerNodo -> siguiente -> siguiente -> dato);
+        //Proceso
+        cout << "El constructor" << Nombre << " esta elaborando el producto" << Codigo << "\n";
+        std::this_thread::sleep_for(std::chrono::seconds(tiempoDeElboracion));
+        cout << "El producto" << Codigo << "ha sido elaborado" << "\n";
+        cantidadAlmacenada++;
         tmp -> lista -> primerNodo -> siguiente -> dato = to_string(cantidadAlmacenada);
-
-    }
-
 };
 
 

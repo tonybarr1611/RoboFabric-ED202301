@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
     ListaCompleja *lista2 = SepararStringsPorLineas(linea, "Cliente");
     lista2->imprimir();
 
-    Producto *producto = new Producto("101", 100 , 30 ,"A" ,"X10");
+    Producto *producto = new Producto("101", 100 , 5 ,"A" ,"X10");
     producto->imprimir();
     ListaSimple * Lista = producto->ConvertirEnListaSimple();
     Lista->imprimir();
