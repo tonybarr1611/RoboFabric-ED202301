@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
     ListaCompleja *lista2 = SepararStringsPorLineas(linea, "Cliente");
     lista2->imprimir();
 
-    Producto *producto = new Producto("101", 100 , 5 ,"A" ,"X9");
+    Producto *producto = new Producto("101", 100 , 5 ,"A" ,"X09");
     producto->imprimir();
     ListaSimple * Lista = producto->ConvertirEnListaSimple();
     Lista->imprimir();
@@ -22,6 +22,7 @@ int main(int argc, char** argv) {
     listaDeProductos->imprimir();
     Constructor * constructor = new Constructor("C1", 0, "101");
     //constructor->AgregarCantidadAlProducto(listaDeProductos);
+    cout << "AQUIAQUI" << endl;
     listaDeProductos->imprimir();
     cout << "----------------------------------------------------------------------------------" << endl;
     ListaSimple *ListaClientesArchivo = LeerDirectorio("Clientes", "txt");
@@ -38,6 +39,10 @@ int main(int argc, char** argv) {
     cout << "----------------------------------------------------------------------------------" << endl;
     ListaCompleja *ListaProductosArchivo = LeerArchivo("Clientes", "txt", "Cliente");
     ListaProductosArchivo->imprimir();
+    cout << "----------------------------------------------------------------------------------" << endl;
+    cout << "PRODUCTO" << endl;
+    Producto *producto_ = new Producto(listaDeProductos->primerNodo->lista);
+    producto_->imprimir();
     Almacen *almacen = new Almacen(listaDeProductos);
     almacen->InsertaProductosEnAlmacen();
     almacen->imprimir();

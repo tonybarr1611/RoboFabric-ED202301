@@ -310,6 +310,14 @@ struct Producto{
         this->categoria = categoria;
         this->ubicacion = ubicacion;
     }
+
+    Producto(ListaSimple * listaProducto){
+        codigo = listaProducto->primerNodo->dato;
+        cantidadAlmacenada = stoi(listaProducto->primerNodo->siguiente->dato);
+        tiempoDeElboracion = stoi(listaProducto->primerNodo->siguiente->siguiente->dato);
+        categoria = listaProducto->primerNodo->siguiente->siguiente->siguiente->dato;
+        ubicacion = listaProducto->primerNodo->siguiente->siguiente->siguiente->siguiente->dato;
+    }
         
     void imprimir(){
         cout << "Codigo: " << codigo << "\n";
@@ -378,13 +386,12 @@ struct Almacen {
     void InsertaProductosEnAlmacen(){
         NodoComplejo *tmp = listaDeProductos->primerNodo;
         while(tmp != NULL){
-            tmp->imprimir();
-            string codigo = tmp->lista->primerNodo->dato;
-            int cantidadAlmacenada = stoi(tmp->lista->primerNodo->siguiente->dato);
-            string ubicacion = tmp->lista->primerNodo->siguiente->siguiente->siguiente->siguiente->dato;// TODO Ordenar como punteros para no tener que usar tantos ->siguiente
-            int fila = ubicacion[0] - 'A';
-            int columna = (ubicacion[1] - '0')+(ubicacion[2] - '1');
-            matriz[fila][columna] = codigo;
+            Producto *producto = new Producto(tmp->lista);
+            producto->imprimir();
+            int fila = producto->ubicacion[0] - 'A';
+            producto->ubicacion = producto->ubicacion.substr(1, producto->ubicacion.length());
+            int columna = stoi(producto->ubicacion) - 1;
+            matriz[fila][columna] = producto->codigo;
             tmp = tmp->siguiente;
         }
     }
