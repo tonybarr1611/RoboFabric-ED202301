@@ -1,6 +1,9 @@
 #include <iostream>
 #include <filesystem>
 #include <fstream>
+#include <thread>
+#include <chrono>
+#include <vector>
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -307,6 +310,14 @@ struct Producto{
         this->categoria = categoria;
         this->ubicacion = ubicacion;
     }
+
+    Producto(ListaSimple * listaProducto){
+        codigo = listaProducto->primerNodo->dato;
+        cantidadAlmacenada = stoi(listaProducto->primerNodo->siguiente->dato);
+        tiempoDeElboracion = stoi(listaProducto->primerNodo->siguiente->siguiente->dato);
+        categoria = listaProducto->primerNodo->siguiente->siguiente->siguiente->dato;
+        ubicacion = listaProducto->primerNodo->siguiente->siguiente->siguiente->siguiente->dato;
+    }
         
     void imprimir(){
         cout << "Codigo: " << codigo << "\n";
@@ -326,8 +337,14 @@ struct Producto{
         lista->agregar(ubicacion);
         return lista;}
 
-    
-    };
+    int DaColumnas(){
+        int columna = stoi(ubicacion.substr(1,ubicacion.length()))-1;
+        return columna;
+    }
+    int DaFilas(){
+        int fila = ubicacion[0] - 'A';
+        return fila;
+    }};
 
 struct Constructor{
     string Nombre; // Nombre ejemplo: Constructor 1
@@ -356,19 +373,59 @@ struct Constructor{
     }
 
     void AgregarCantidadAlProducto(ListaCompleja * listaDeProductos){
-        //Se determina la posicion del producto en la lista de productos
         NodoComplejo* tmp = listaDeProductos->Buscar(Codigo);
-        int cantidadAlmacenada= stoi(tmp -> lista -> primerNodo -> siguiente -> dato) + 1;
+        //Variables
+        int cantidadAlmacenada= stoi(tmp -> lista -> primerNodo -> siguiente -> dato);
+        int tiempoDeElboracion= stoi(tmp -> lista -> primerNodo -> siguiente -> siguiente -> dato);
+        //Proceso
+        cout << "El constructor" << Nombre << " esta elaborando el producto" << Codigo << "\n";
+        std::this_thread::sleep_for(std::chrono::seconds(tiempoDeElboracion));
+        cout << "El producto" << Codigo << "ha sido elaborado" << "\n";
+        cantidadAlmacenada++;
         tmp -> lista -> primerNodo -> siguiente -> dato = to_string(cantidadAlmacenada);
+}};
 
+struct Almacen {
+    ListaCompleja *listaDeProductos;
+    std::vector<std::vector<string>> matriz;
+
+    // Constructores
+    Almacen() {
+        listaDeProductos = new ListaCompleja();
+        matriz = std::vector<std::vector<string>>(10, std::vector<string>(25));
     }
 
+    Almacen(ListaCompleja* _listaDeProductos){
+        listaDeProductos = _listaDeProductos;
+        matriz = std::vector<std::vector<string>>(10, std::vector<string>(25));
+    }
+
+    // Método para imprimir la matriz
+    void imprimir() {
+        "Almacen: \n";
+        for (int i = 0; i < matriz.size(); i++) {
+            for (int j = 0; j < matriz[i].size(); j++) {
+                cout <<"[" << matriz[i][j] << "]";
+            }
+            cout << endl;
+        }
+    }
+    void InsertaProductosEnAlmacen(){
+        NodoComplejo *tmp = listaDeProductos->primerNodo;
+        while (tmp != NULL){
+        Producto * producto = new Producto(tmp->lista);
+        int cantidadAlmacenada = producto->cantidadAlmacenada;
+        int fila = producto->DaFilas();
+        int columna = producto->DaColumnas();
+        matriz[columna][fila] = producto->codigo;
+        tmp = tmp->siguiente;}
+
+    }
 };
 
 
 //Funciones
-
-ListaSimple *SepararStringsPorTabs(string linea) {
+ListaSimple* SepararStringsPorTabs(string linea) {
     ListaSimple *lista = new ListaSimple(); // Crear una instancia de ListaSimple
     string dato = "";
 
