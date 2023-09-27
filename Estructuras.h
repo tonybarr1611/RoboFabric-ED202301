@@ -337,8 +337,14 @@ struct Producto{
         lista->agregar(ubicacion);
         return lista;}
 
-    
-    };
+    int DaColumnas(){
+        int columna = stoi(ubicacion.substr(1,ubicacion.length()))-1;
+        return columna;
+    }
+    int DaFilas(){
+        int fila = ubicacion[0] - 'A';
+        return fila;
+    }};
 
 struct Constructor{
     string Nombre; // Nombre ejemplo: Constructor 1
@@ -383,28 +389,15 @@ struct Almacen {
     ListaCompleja *listaDeProductos;
     std::vector<std::vector<string>> matriz;
 
-    void InsertaProductosEnAlmacen(){
-        NodoComplejo *tmp = listaDeProductos->primerNodo;
-        while(tmp != NULL){
-            Producto *producto = new Producto(tmp->lista);
-            producto->imprimir();
-            int fila = producto->ubicacion[0] - 'A';
-            producto->ubicacion = producto->ubicacion.substr(1, producto->ubicacion.length());
-            int columna = stoi(producto->ubicacion) - 1;
-            matriz[fila][columna] = producto->codigo;
-            tmp = tmp->siguiente;
-        }
-    }
-
     // Constructores
     Almacen() {
         listaDeProductos = new ListaCompleja();
-        matriz = std::vector<std::vector<string>>(10, std::vector<string>(26));
+        matriz = std::vector<std::vector<string>>(10, std::vector<string>(25));
     }
 
     Almacen(ListaCompleja* _listaDeProductos){
         listaDeProductos = _listaDeProductos;
-        matriz = std::vector<std::vector<string>>(10, std::vector<string>(26));
+        matriz = std::vector<std::vector<string>>(10, std::vector<string>(25));
     }
 
     // Método para imprimir la matriz
@@ -416,6 +409,17 @@ struct Almacen {
             }
             cout << endl;
         }
+    }
+    void InsertaProductosEnAlmacen(){
+        NodoComplejo *tmp = listaDeProductos->primerNodo;
+        while (tmp != NULL){
+        Producto * producto = new Producto(tmp->lista);
+        int cantidadAlmacenada = producto->cantidadAlmacenada;
+        int fila = producto->DaFilas();
+        int columna = producto->DaColumnas();
+        matriz[columna][fila] = producto->codigo;
+        tmp = tmp->siguiente;}
+
     }
 };
 

@@ -12,9 +12,9 @@ int main(int argc, char** argv) {
     ListaCompleja *lista2 = SepararStringsPorLineas(linea, "Cliente");
     lista2->imprimir();
 
-    Producto *producto = new Producto("101", 100 , 5 ,"A" ,"X09");
-    producto->imprimir();
-    ListaSimple * Lista = producto->ConvertirEnListaSimple();
+    Producto *producto1 = new Producto("101", 100 , 5 ,"A" ,"X09");
+    producto1->imprimir();
+    ListaSimple * Lista = producto1->ConvertirEnListaSimple();
     Lista->imprimir();
     cout << "----------------------------------------------------------------------------------" << endl;
     ListaCompleja * listaDeProductos = new ListaCompleja();
@@ -41,8 +41,13 @@ int main(int argc, char** argv) {
     ListaProductosArchivo->imprimir();
     cout << "----------------------------------------------------------------------------------" << endl;
     cout << "PRODUCTO" << endl;
-    Producto *producto_ = new Producto(listaDeProductos->primerNodo->lista);
-    producto_->imprimir();
+    Producto * producto = new Producto(listaDeProductos->primerNodo->lista);
+    producto->imprimir();
+    Producto * umama= new Producto("101", 100 , 5 ,"A" ,"A1");
+    listaDeProductos->agregar("Producto", umama->ConvertirEnListaSimple());
+    int a = producto->DaColumnas();
+    int b = producto->DaFilas();
+    cout << a << b << endl;
     Almacen *almacen = new Almacen(listaDeProductos);
     almacen->InsertaProductosEnAlmacen();
     almacen->imprimir();
