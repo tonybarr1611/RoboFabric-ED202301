@@ -3,6 +3,7 @@
 #include <fstream>
 #include <thread>
 #include <chrono>
+#include <vector>
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -368,12 +369,52 @@ struct Constructor{
         cout << "El producto" << Codigo << "ha sido elaborado" << "\n";
         cantidadAlmacenada++;
         tmp -> lista -> primerNodo -> siguiente -> dato = to_string(cantidadAlmacenada);
+}};
+
+struct Almacen {
+    ListaCompleja *listaDeProductos;
+    std::vector<std::vector<string>> matriz;
+
+    void InsertaProductosEnAlmacen(){
+        NodoComplejo *tmp = listaDeProductos->primerNodo;
+        while(tmp != NULL){
+            tmp->imprimir();
+            string codigo = tmp->lista->primerNodo->dato;
+            int cantidadAlmacenada = stoi(tmp->lista->primerNodo->siguiente->dato);
+            string ubicacion = tmp->lista->primerNodo->siguiente->siguiente->siguiente->siguiente->dato;// TODO Ordenar como punteros para no tener que usar tantos ->siguiente
+            int fila = ubicacion[0] - 'A';
+            int columna = (ubicacion[1] - '0')+(ubicacion[2] - '1');
+            matriz[fila][columna] = codigo;
+            tmp = tmp->siguiente;
+        }
+    }
+
+    // Constructores
+    Almacen() {
+        listaDeProductos = new ListaCompleja();
+        matriz = std::vector<std::vector<string>>(10, std::vector<string>(26));
+    }
+
+    Almacen(ListaCompleja* _listaDeProductos){
+        listaDeProductos = _listaDeProductos;
+        matriz = std::vector<std::vector<string>>(10, std::vector<string>(26));
+    }
+
+    // Método para imprimir la matriz
+    void imprimir() {
+        "Almacen: \n";
+        for (int i = 0; i < matriz.size(); i++) {
+            for (int j = 0; j < matriz[i].size(); j++) {
+                cout <<"[" << matriz[i][j] << "]";
+            }
+            cout << endl;
+        }
+    }
 };
 
 
 //Funciones
-
-ListaSimple *SepararStringsPorTabs(string linea) {
+ListaSimple* SepararStringsPorTabs(string linea) {
     ListaSimple *lista = new ListaSimple(); // Crear una instancia de ListaSimple
     string dato = "";
 
