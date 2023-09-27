@@ -402,7 +402,7 @@ struct Almacen {
 
     // Método para imprimir la matriz
     void imprimir() {
-        "Almacen: \n";
+        cout << "Almacen: \n";
         for (int i = 0; i < matriz.size(); i++) {
             for (int j = 0; j < matriz[i].size(); j++) {
                 cout <<"[" << matriz[i][j] << "]";
@@ -410,17 +410,49 @@ struct Almacen {
             cout << endl;
         }
     }
+
+    NodoComplejo * buscarProducto(string codigo){
+        NodoComplejo * tmp = listaDeProductos->primerNodo;
+        while (tmp != NULL){
+            if (tmp->lista->primerNodo->dato == codigo)
+                return tmp;
+            tmp = tmp->siguiente;
+        }
+        return NULL;
+    }
+
     void InsertaProductosEnAlmacen(){
         NodoComplejo *tmp = listaDeProductos->primerNodo;
         while (tmp != NULL){
-        Producto * producto = new Producto(tmp->lista);
-        int cantidadAlmacenada = producto->cantidadAlmacenada;
-        int fila = producto->DaFilas();
-        int columna = producto->DaColumnas();
-        matriz[columna][fila] = producto->codigo;
-        tmp = tmp->siguiente;}
-
+            Producto * producto = new Producto(tmp->lista);
+            int fila = producto->DaFilas();
+            int columna = producto->DaColumnas();
+            matriz[columna][fila] = producto->codigo;
+            tmp = tmp->siguiente;
+        }
     }
+
+    void InsertaProductoEnAlmacen(Producto * producto){
+        if (buscarProducto(producto->codigo) == NULL){
+            listaDeProductos->agregar("Producto", producto->ConvertirEnListaSimple());
+            int fila = producto->DaFilas();
+            int columna = producto->DaColumnas();
+            matriz[columna][fila] = producto->codigo;
+        }else{
+            return;
+        }      
+    }
+
+    void InsertaProductoEnAlmacen(ListaSimple * lista){
+        if (buscarProducto(lista->primerNodo->dato) == NULL){
+            listaDeProductos->agregar("Producto", lista);
+            Producto * producto = new Producto(lista);
+            InsertaProductoEnAlmacen(producto);
+        }else{
+            return;
+        }
+        
+    }    
 };
 
 
