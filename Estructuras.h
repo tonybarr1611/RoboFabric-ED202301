@@ -8,6 +8,7 @@
 using namespace std;
 namespace fs = std::filesystem;
 
+// Declaraciones de Estructuras
 struct NodoSimple;
 struct NodoComplejo;
 struct ListaSimple;
@@ -15,10 +16,9 @@ struct ListaCompleja;
 struct Cola;
 struct Producto;
 struct Constructor;
+struct Almacen;
 
-//Declaraciones de Funciones
-
-
+// Declaraciones de Funciones
 ListaSimple *SepararStringsPorTabs(string linea);
 ListaCompleja *SepararStringsPorLineas(string linea, string tipo);
 ListaSimple *LeerDirectorio(string, string);
@@ -26,7 +26,7 @@ ListaCompleja *LeerArchivo(string, string, string); // Directorio, tipo de archi
 ListaCompleja *LeerArchivo(ListaSimple*, string); // Lista de archivos, tipo de lista
 ListaCompleja *LeerArchivo(NodoSimple*, string); // Nodo de archivos, tipo de lista
 
-//Estructuras 
+// Estructuras 
 struct NodoSimple {
     // NodoSimple es un nodo de ListaSimple
     string dato;
@@ -288,261 +288,10 @@ struct Cola{
     }
 };
 
-struct Producto{
-    string codigo;
-    int cantidadAlmacenada;
-    int tiempoDeElboracion;
-    string categoria;
-    string ubicacion;
+#include "Structs/Producto.h"
 
-    //constructores
-    Producto(){
-        codigo = "";
-        cantidadAlmacenada = 0;
-        tiempoDeElboracion = 0;
-        categoria = "";
-        ubicacion = "";}
-    
-    Producto(string codigo, int cantidadAlmacenada, int tiempoDeElboracion, string categoria, string ubicacion){
-        this->codigo = codigo;
-        this->cantidadAlmacenada = cantidadAlmacenada;
-        this->tiempoDeElboracion = tiempoDeElboracion;
-        this->categoria = categoria;
-        this->ubicacion = ubicacion;
-    }
+#include "Structs/Constructor.h"
 
-    Producto(ListaSimple * listaProducto){
-        codigo = listaProducto->primerNodo->dato;
-        cantidadAlmacenada = stoi(listaProducto->primerNodo->siguiente->dato);
-        tiempoDeElboracion = stoi(listaProducto->primerNodo->siguiente->siguiente->dato);
-        categoria = listaProducto->primerNodo->siguiente->siguiente->siguiente->dato;
-        ubicacion = listaProducto->primerNodo->siguiente->siguiente->siguiente->siguiente->dato;
-    }
-        
-    void imprimir(){
-        cout << "Codigo: " << codigo << "\n";
-        cout << "Cantidad Almacenada: " << cantidadAlmacenada << "\n";
-        cout << "Tiempo de Elaboracion: " << tiempoDeElboracion << "\n";
-        cout << "Categoria: " << categoria << "\n";
-        cout << "Ubicacion: " << ubicacion << "\n";
+#include "Structs/Almacen.h"
 
-    }
-
-    ListaSimple* ConvertirEnListaSimple(){
-        ListaSimple *lista = new ListaSimple();
-        lista->agregar(codigo);
-        lista->agregar(to_string(cantidadAlmacenada));
-        lista->agregar(to_string(tiempoDeElboracion));
-        lista->agregar(categoria);
-        lista->agregar(ubicacion);
-        return lista;}
-
-    int DaColumnas(){
-        int columna = stoi(ubicacion.substr(1,ubicacion.length()))-1;
-        return columna;
-    }
-    int DaFilas(){
-        int fila = ubicacion[0] - 'A';
-        return fila;
-    }};
-
-struct Constructor{
-    string Nombre; // Nombre ejemplo: Constructor 1
-    int Estado; //Apagado = 0, Encendido = 1, En proceso = 2
-    string Codigo; // Codigo del producto que esta elaborando
-
-    //constructor
-    Constructor(){
-        Nombre = "";
-        Estado = 0;
-        Codigo = "";
-    }
-
-    Constructor(string Nombre, int Estado, string Codigo){
-        this->Nombre = Nombre;
-        this->Estado = Estado;
-        this->Codigo = Codigo;
-    }
-
-    //Metodos
-
-    void imprimir(){
-        cout << "Constructor: " << Nombre << "\n";
-        cout << "Estado: " << Estado << "\n";
-        cout << "Codigo: " << Codigo << "\n";
-    }
-
-    void AgregarCantidadAlProducto(ListaCompleja * listaDeProductos){
-        NodoComplejo* tmp = listaDeProductos->Buscar(Codigo);
-        //Variables
-        int cantidadAlmacenada= stoi(tmp -> lista -> primerNodo -> siguiente -> dato);
-        int tiempoDeElboracion= stoi(tmp -> lista -> primerNodo -> siguiente -> siguiente -> dato);
-        //Proceso
-        cout << "El constructor" << Nombre << " esta elaborando el producto" << Codigo << "\n";
-        std::this_thread::sleep_for(std::chrono::seconds(tiempoDeElboracion));
-        cout << "El producto" << Codigo << "ha sido elaborado" << "\n";
-        cantidadAlmacenada++;
-        tmp -> lista -> primerNodo -> siguiente -> dato = to_string(cantidadAlmacenada);
-}};
-
-struct Almacen {
-    ListaCompleja *listaDeProductos;
-    std::vector<std::vector<string>> matriz;
-
-    // Constructores
-    Almacen() {
-        listaDeProductos = new ListaCompleja();
-        matriz = std::vector<std::vector<string>>(10, std::vector<string>(25));
-    }
-
-    Almacen(ListaCompleja* _listaDeProductos){
-        listaDeProductos = _listaDeProductos;
-        matriz = std::vector<std::vector<string>>(10, std::vector<string>(25));
-    }
-
-    // Método para imprimir la matriz
-    void imprimir() {
-        cout << "Almacen: \n";
-        for (int i = 0; i < matriz.size(); i++) {
-            for (int j = 0; j < matriz[i].size(); j++) {
-                cout <<"[" << matriz[i][j] << "]";
-            }
-            cout << endl;
-        }
-    }
-
-    NodoComplejo * buscarProducto(string codigo){
-        NodoComplejo * tmp = listaDeProductos->primerNodo;
-        while (tmp != NULL){
-            if (tmp->lista->primerNodo->dato == codigo)
-                return tmp;
-            tmp = tmp->siguiente;
-        }
-        return NULL;
-    }
-
-    void InsertaProductosEnAlmacen(){
-        NodoComplejo *tmp = listaDeProductos->primerNodo;
-        while (tmp != NULL){
-            Producto * producto = new Producto(tmp->lista);
-            int fila = producto->DaFilas();
-            int columna = producto->DaColumnas();
-            matriz[columna][fila] = producto->codigo;
-            tmp = tmp->siguiente;
-        }
-    }
-
-    void InsertaProductoEnAlmacen(Producto * producto){
-        if (buscarProducto(producto->codigo) == NULL){
-            listaDeProductos->agregar("Producto", producto->ConvertirEnListaSimple());
-            int fila = producto->DaFilas();
-            int columna = producto->DaColumnas();
-            matriz[columna][fila] = producto->codigo;
-        }else{
-            return;
-        }      
-    }
-
-    void InsertaProductoEnAlmacen(ListaSimple * lista){
-        if (buscarProducto(lista->primerNodo->dato) == NULL){
-            listaDeProductos->agregar("Producto", lista);
-            Producto * producto = new Producto(lista);
-            InsertaProductoEnAlmacen(producto);
-        }else{
-            return;
-        }
-        
-    }    
-};
-
-
-//Funciones
-ListaSimple* SepararStringsPorTabs(string linea) {
-    ListaSimple *lista = new ListaSimple(); // Crear una instancia de ListaSimple
-    string dato = "";
-
-    for (int i = 0; i < linea.length(); i++) {
-        if (linea[i] == '\t') {
-            lista->agregar(dato); // Agregar el dato a la lista
-            dato = "";
-        } else {
-            dato += linea[i];
-        }
-    }
-    lista->agregar(dato); // Agregar el último dato
-    return lista;
-}
-
-ListaCompleja *SepararStringsPorLineas(string linea, string tipo){
-    // Toma un string y lo separa por saltos de línea, cada línea se convierte en una lista simple que se pasa por SepararStringsPorTabs
-    ListaCompleja *listaCompleja = new ListaCompleja();
-    listaCompleja->tipo = tipo;
-    NodoComplejo *nodoActual = new NodoComplejo(tipo);
-    string dato = "";
-
-    for (int i = 0; i < linea.length(); i++) {
-        if (linea[i] == '\n') {
-            ListaSimple *listaSimple = SepararStringsPorTabs(dato);
-            nodoActual->lista = listaSimple;
-            listaCompleja->agregar(nodoActual);
-            nodoActual = new NodoComplejo(tipo);
-            dato = "";
-        } else {
-            dato += linea[i];
-        }
-    }
-
-    ListaSimple *listaSimple = SepararStringsPorTabs(dato);
-    nodoActual->lista = listaSimple;
-    listaCompleja->agregar(nodoActual);
-
-    return listaCompleja;
-}
-
-ListaSimple *LeerDirectorio(string directorio, string tipoArchivo){
-    // Toma un directorio, direccion relativa, y devuelve una lista de todos los archivos que sean del tipo especificado
-    ListaSimple *lista = new ListaSimple();
-    tipoArchivo = "." + tipoArchivo;
-    for (const auto & entry : fs::directory_iterator(directorio)){
-        string path = entry.path().string();
-        if(path.substr(path.length() - tipoArchivo.length(), path.length()) == tipoArchivo)
-            lista->agregar(path);
-    }
-    return lista;
-}
-
-ListaCompleja *LeerArchivo(ListaSimple *listaArchivos, string tipoLista){
-    // Toma una lista de archivos, lee cada archivo y devuelve una lista de listas con los datos del archivo
-    ListaCompleja *listaCompleja = new ListaCompleja();
-    listaCompleja->tipo = tipoLista;
-    NodoSimple *tmp = listaArchivos->primerNodo;
-    while(tmp != NULL){
-        string path = tmp->dato;
-        ifstream archivo(path);
-        string linea;
-        string contenido = "";
-        while(getline(archivo, linea)){
-            if (contenido == "")
-                contenido += linea;
-            else
-                contenido += "\n" + linea;
-        }
-        ListaCompleja *lista = SepararStringsPorLineas(contenido, tipoLista);
-        listaCompleja->agregar(lista);
-        tmp = tmp->siguiente;
-    }
-    return listaCompleja;
-}
-
-ListaCompleja *LeerArchivo(string directorio, string tipoArchivo, string tipoLista){
-    // Toma un directorio, direccion relativa, lee el archivo y devuelve una lista de listas con los datos del archivo
-    ListaSimple *lista = LeerDirectorio(directorio, tipoArchivo);
-    return LeerArchivo(lista, tipoLista);
-}
-
-ListaCompleja *LeerArchivo(NodoSimple *NodoArchivo, string tipoLista){
-    // Toma un nodo de archivos, lee el archivo y devuelve una lista de listas con los datos del archivo
-    ListaSimple *lista = new ListaSimple();
-    lista->agregar(NodoArchivo->dato);
-    return LeerArchivo(lista, tipoLista);
-}
+#include "Funciones.h"
