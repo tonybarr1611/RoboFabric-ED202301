@@ -7,14 +7,14 @@ struct Balanceador {
 
     //constructor 
     Balanceador() {
-    Estado = 0;
-    for (int i = 0; i < 10; i++) {
-        ArrayConstructores[i] = new Constructor();
-    }
-    // Inicializa las colas aquí, por ejemplo, si deseas que estén vacías:
-    while (!Altaprioridad.empty()) Altaprioridad.pop();
-    while (!Bajaprioridad.empty()) Bajaprioridad.pop();
-    while (!PedidoInstantaneo.empty()) PedidoInstantaneo.pop();
+        Estado = 0;
+        for (int i = 0; i < 10; i++) {
+            ArrayConstructores[i] = new Constructor();
+        }
+        // Inicializa las colas aquí, por ejemplo, si deseas que estén vacías:
+        while (!Altaprioridad.empty()) Altaprioridad.pop();
+        while (!Bajaprioridad.empty()) Bajaprioridad.pop();
+        while (!PedidoInstantaneo.empty()) PedidoInstantaneo.pop();
     }
 
     Balanceador(queue<ListaCompleja*> Altaprioridad, queue<ListaCompleja*> Bajaprioridad, queue<ListaCompleja*> PedidoInstantaneo, int Estado){
@@ -24,8 +24,7 @@ struct Balanceador {
         this->Estado = Estado;
     }
 
-    //Metodos 
-
+    //Metodos
     void ComprobarPedido(ListaSimple * ListaPedidos, ListaCompleja * ListaClientes){
         //Esta Funcion Unicamente Comprueba un pedidos en ListaPedidos en caso da dar error los mueves al archivo de error
         NodoSimple  * tmp = ListaPedidos->primerNodo;
@@ -62,16 +61,14 @@ struct Balanceador {
         //Esta funcion inicia el pedido, si no hay pedidos en las colas, no hace nada
         if (Altaprioridad.empty() && Bajaprioridad.empty() && PedidoInstantaneo.empty()){
             cout << "No hay pedidos en las colas" << endl;
-        }
-        else{
+        }else{
             ListaCompleja * PedidoActual;
             NodoComplejo * tmp;
             if (!Altaprioridad.empty()){
                 PedidoActual = Altaprioridad.front();
                 Altaprioridad.pop();
                 tmp = PedidoActual->primerNodo->siguiente->siguiente;
-            }
-            else if (!Bajaprioridad.empty()){
+            }else if (!Bajaprioridad.empty()){
                 PedidoActual = Bajaprioridad.front();
                 Bajaprioridad.pop();
                 tmp = PedidoActual->primerNodo->siguiente->siguiente;  
