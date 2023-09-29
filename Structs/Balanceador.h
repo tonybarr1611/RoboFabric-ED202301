@@ -43,36 +43,42 @@ struct Balanceador {
             PedidoInstantaneo.push(PedidoActual);
         }
         if (PedidoActual->primerNodo->siguiente->siguiente== NULL)
-        //Codigo que mueve archivos a error, no es un pedido
+        // TODO Codigo que mueve archivos a error, no es un pedido
         tmp = tmp -> siguiente;
         } 
         cout << "Se metieron todos los pedidos a las colas" << endl;
         return ;
-}
+    }
+
     void IniciaPedido(){
         //Esta funcion inicia el pedido, si no hay pedidos en las colas, no hace nada
         if (Altaprioridad.empty() && Bajaprioridad.empty() && PedidoInstantaneo.empty()){
             cout << "No hay pedidos en las colas" << endl;
         }
         else{
+            ListaSimple * Bitacora = new ListaSimple();
+            ListaCompleja * PedidoActual;
+            NodoComplejo * tmp;
             if (!Altaprioridad.empty()){
-                ListaSimple * Bitacora = new ListaSimple();
-                ListaCompleja * PedidoActual = Altaprioridad.front();
-                cout << "El pedido:" << PedidoActual->primerNodo->lista->primerNodo->dato << "Esta siendo procesado" << endl;
+                PedidoActual = Altaprioridad.front();
                 Altaprioridad.pop();
-                NodoComplejo * tmp= PedidoActual->primerNodo->siguiente->siguiente;
-                while (tmp != NULL){
-                    string CodigoProducto = tmp -> primerNodo -> lista -> primerNodo -> dato 
-                    int cantidad = tmp -> primerNodo -> lista -> primerNodo -> siguiente -> dato 
-                };
+                tmp = PedidoActual->primerNodo->siguiente->siguiente;
             }
-            else{
-                if (!Bajaprioridad.empty()){
-                  return ;  
-                }
-                else{
-                    return ;
-                }
+            else if (!Bajaprioridad.empty()){
+                PedidoActual = Bajaprioridad.front();
+                Bajaprioridad.pop();
+                tmp = PedidoActual->primerNodo->siguiente->siguiente;  
+            }else{
+                PedidoActual = PedidoInstantaneo.front();
+                PedidoInstantaneo.pop();
+                tmp = PedidoActual->primerNodo->siguiente->siguiente;  
+            }
+            cout << "El pedido:" << PedidoActual->primerNodo->lista->primerNodo->dato << "Esta siendo procesado" << endl;
+            while (tmp != NULL){
+                string CodigoProducto = tmp -> lista -> primerNodo -> dato;
+                int cantidad = stoi(tmp -> lista -> primerNodo -> siguiente -> dato);
+                // TODO: Buscar el producto en el almacen
+                tmp = tmp -> siguiente;
             }
         }
     }
