@@ -30,19 +30,27 @@ struct Balanceador {
         //Esta Funcion Unicamente Comprueba un pedidos en ListaPedidos en caso da dar error los mueves al archivo de error
         NodoSimple  * tmp = ListaPedidos->primerNodo;
         ListaCompleja * PedidoActual= new ListaCompleja(); 
+        ListaSimple * Bitacora = new ListaSimple();
         while (tmp != NULL){
             PedidoActual = LeerArchivo(tmp , "Pedido");
         int Prioridad = RetornaPrioridad(ListaClientes, PedidoActual->primerNodo->siguiente->lista->primerNodo->dato);
+        Bitacora->agregar("Pedido:\t\t" + PedidoActual->primerNodo->lista->primerNodo->dato);
+        Bitacora->agregar("Cliente:\t\t" + PedidoActual->primerNodo->siguiente->lista->primerNodo->dato);
+        PedidoActual->agregar(Bitacora);
         if (Prioridad == 10){
+            // Rcupera la hora del sistema y la agrega a la bitacora
+            Bitacora->agregar("Cola:\t\t Alta Prioridad - " + HoraSistema());
             Altaprioridad.push(PedidoActual);
         }
         if (Prioridad  < 10){
+            Bitacora->agregar("Cola:\t\t Baja Prioridad - " + HoraSistema());
             Bajaprioridad.push(PedidoActual);
         }
         if (Prioridad == 11){
+            Bitacora->agregar("Cola:\t\t Pedido Instantaneo - " + HoraSistema());
             PedidoInstantaneo.push(PedidoActual);
         }
-        if (PedidoActual->primerNodo->siguiente->siguiente== NULL)
+        if (PedidoActual->primerNodo->siguiente->siguiente == NULL)
         // TODO Codigo que mueve archivos a error, no es un pedido
         tmp = tmp -> siguiente;
         } 
@@ -56,7 +64,6 @@ struct Balanceador {
             cout << "No hay pedidos en las colas" << endl;
         }
         else{
-            ListaSimple * Bitacora = new ListaSimple();
             ListaCompleja * PedidoActual;
             NodoComplejo * tmp;
             if (!Altaprioridad.empty()){

@@ -5,6 +5,7 @@
 #include <chrono>
 #include <vector>
 #include <queue>
+
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -20,6 +21,7 @@ struct Almacen;
 struct Balanceador;
 
 // Declaraciones de Funciones
+string HoraSistema();
 ListaSimple *SepararStringsPorTabs(string linea);
 ListaCompleja *SepararStringsPorLineas(string linea, string tipo);
 ListaSimple *LeerDirectorio(string, string);
