@@ -4,7 +4,7 @@
 #include <thread>
 #include <chrono>
 #include <vector>
-
+#include <queue>
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -17,6 +17,7 @@ struct Cola;
 struct Producto;
 struct Constructor;
 struct Almacen;
+struct Balanceador;
 
 // Declaraciones de Funciones
 ListaSimple *SepararStringsPorTabs(string linea);
@@ -25,6 +26,7 @@ ListaSimple *LeerDirectorio(string, string);
 ListaCompleja *LeerArchivo(string, string, string); // Directorio, tipo de archivo, tipo de lista
 ListaCompleja *LeerArchivo(ListaSimple*, string); // Lista de archivos, tipo de lista
 ListaCompleja *LeerArchivo(NodoSimple*, string); // Nodo de archivos, tipo de lista
+int RetornaPrioridad(ListaCompleja *, string);
 
 // Estructuras 
 struct NodoSimple {
@@ -293,5 +295,7 @@ struct Cola{
 #include "Structs/Constructor.h"
 
 #include "Structs/Almacen.h"
+
+#include "Structs/Balanceador.h"
 
 #include "Funciones.h"

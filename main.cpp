@@ -2,32 +2,18 @@
 
 int main(int argc, char** argv) {
     cout << "RoboFabric 2023/01" << endl;
-    string linea = "Hola\tMundo\tCruel\tAdios\tMundo\tCruel";
-    ListaSimple *lista = SepararStringsPorTabs(linea);
-    cout << "\nLista de strings:" << endl;
-    lista->imprimir();
+    
 
-    linea = "Hola\tMundo\tCruel\nAdios\tMundo\tCruel";
-    cout << "\nLista de strings compleja:" << endl;
-    ListaCompleja *lista2 = SepararStringsPorLineas(linea, "Cliente");
-    lista2->imprimir();
+    cout << "--------------------------------------------------------------------" << endl; 
+    cout << "Beta de la implementacion de la lista de Productos" << endl;
+    ListaCompleja * listaDeProductos = LeerArchivo("Productos", "txt", "Producto");
+    listaDeProductos->primerNodo->imprimir();
+    listaDeProductos->imprimir();
 
-    Producto *producto1 = new Producto("C07", 100 , 5 ,"A" ,"X09");
-    producto1->imprimir();
-    ListaSimple * Lista = producto1->ConvertirEnListaSimple();
-    Lista->imprimir();
     cout << "----------------------------------------------------------------------------------" << endl;
-    ListaCompleja * listaDeProductos = new ListaCompleja();
-    listaDeProductos->agregar("Producto", Lista);
-    listaDeProductos->imprimir();
-    Constructor * constructor = new Constructor("C1", 0, "101");
-    //constructor->AgregarCantidadAlProducto(listaDeProductos);
-    cout << "AQUIAQUI" << endl;
-    listaDeProductos->imprimir();
-    cout << "----------------------------------------------------------------------------------" << endl;
+    cout << "Beta de la implementacion de la lista de Clientes" << endl;
     ListaSimple *ListaClientesArchivo = LeerDirectorio("Clientes", "txt");
     ListaClientesArchivo->imprimir();
-    cout << "----------------------------------------------------------------------------------" << endl;
     NodoSimple *nodo = ListaClientesArchivo->primerNodo;
     while (nodo != NULL){
         cout << nodo->dato << endl;
@@ -37,22 +23,20 @@ int main(int argc, char** argv) {
         cout << "-----------------------------------" << endl;
     }
     cout << "----------------------------------------------------------------------------------" << endl;
-    ListaCompleja *ListaProductosArchivo = LeerArchivo("Clientes", "txt", "Cliente");
-    ListaProductosArchivo->imprimir();
+    cout << "Beta de la implementacion de pedidos" << endl;
+    ListaSimple *ListaPedidos = LeerDirectorio("Pedidos//Pendientes", "txt");
+    ListaPedidos->imprimir();
+    NodoSimple * tmp = ListaPedidos->primerNodo;
+    ListaCompleja * ListaPedidosCompleja;
+    while(tmp != NULL){
+        ListaPedidosCompleja = LeerArchivo(tmp, "Pedido");
+        tmp = tmp->siguiente;
+    }
+
+    ListaPedidosCompleja->imprimir();
+    
+    
     cout << "----------------------------------------------------------------------------------" << endl;
-    cout << "PRODUCTO" << endl;
-    Producto * producto = new Producto(listaDeProductos->primerNodo->lista);
-    producto->imprimir();
-    Producto * umama= new Producto("A01", 100 , 5 ,"A" ,"A1");
-    listaDeProductos->agregar("Producto", umama->ConvertirEnListaSimple());
-    int a = producto->DaColumnas();
-    int b = producto->DaFilas();
-    cout << a << b << endl;
-    Almacen *almacen = new Almacen(listaDeProductos);
-    almacen->InsertaProductosEnAlmacen();
-    almacen->imprimir();
-    almacen->InsertaProductoEnAlmacen(new Producto("A01", 100 , 5 ,"A" ,"A5"));
-    almacen->imprimir();
 
     return 0;
 }

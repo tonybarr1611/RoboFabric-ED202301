@@ -82,9 +82,10 @@ ListaCompleja *LeerArchivo(string directorio, string tipoArchivo, string tipoLis
     return LeerArchivo(lista, tipoLista);
 }
 
-ListaCompleja *LeerArchivo(NodoSimple *NodoArchivo, string tipoLista){
-    // Toma un nodo de archivos, lee el archivo y devuelve una lista de listas con los datos del archivo
-    ListaSimple *lista = new ListaSimple();
-    lista->agregar(NodoArchivo->dato);
-    return LeerArchivo(lista, tipoLista);
-}
+int RetornaPrioridad(ListaCompleja * ListaClientes, string codigo){
+    //Retorna la prioridad del Cliente con su codigo 
+    NodoComplejo * ClienteBuscado = ListaClientes->Buscar(codigo);
+    if (ClienteBuscado != NULL){
+        return stoi(ClienteBuscado->lista->ultimoNodo->dato);}
+    else{ return -1;
+        }}
