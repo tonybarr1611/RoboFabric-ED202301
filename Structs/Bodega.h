@@ -1,14 +1,14 @@
-struct Almacen {
+struct Bodega {
     ListaCompleja *listaDeProductos;
     std::vector<std::vector<string>> matriz;
 
     // Constructores
-    Almacen() {
+    Bodega() {
         listaDeProductos = new ListaCompleja();
         matriz = std::vector<std::vector<string>>(10, std::vector<string>(25));
     }
 
-    Almacen(ListaCompleja* _listaDeProductos){
+    Bodega(ListaCompleja* _listaDeProductos){
         listaDeProductos = _listaDeProductos;
         matriz = std::vector<std::vector<string>>(10, std::vector<string>(25));
     }
