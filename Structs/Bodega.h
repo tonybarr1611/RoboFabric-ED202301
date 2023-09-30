@@ -1,5 +1,7 @@
 struct Bodega {
     ListaCompleja *listaDeProductos;
+    queue<ListaCompleja*> * paraAlisto;
+    queue<Alistador*> * Alistadores;
     std::vector<std::vector<string>> matriz;
 
     // Constructores
@@ -8,8 +10,10 @@ struct Bodega {
         matriz = std::vector<std::vector<string>>(10, std::vector<string>(25));
     }
 
-    Bodega(ListaCompleja* _listaDeProductos){
+    Bodega(ListaCompleja* _listaDeProductos, queue<ListaCompleja*> * _paraAlisto, queue<Alistador*> * _Alistadores) {
         listaDeProductos = _listaDeProductos;
+        paraAlisto = _paraAlisto;
+        Alistadores = _Alistadores;
         matriz = std::vector<std::vector<string>>(10, std::vector<string>(25));
     }
 
@@ -64,6 +68,19 @@ struct Bodega {
         }else{
             return;
         }
-        
     }    
+
+    void continuarPedido(){
+        // Funcion que debe ejecutarse en un thread constante
+        if (!paraAlisto->empty()){
+            ListaCompleja * pedido = paraAlisto->front();
+            paraAlisto->pop();
+            Alistador * alistador = Alistadores->front();
+            Alistadores->pop();
+            std::thread hilo(&Alistador::Alistar, pedido);
+            hilo.detach();
+        }else{
+            return;
+        }
+    }
 };

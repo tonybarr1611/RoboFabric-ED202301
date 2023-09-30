@@ -2,6 +2,7 @@ struct Alistador{
     bool encendido;
     int id; // 1-6
     ListaCompleja * listaProductos;
+    queue<Alistador*> * Alistadores;
     queue<ListaCompleja*> * Alistados;
 
     Alistador(){
@@ -45,5 +46,6 @@ struct Alistador{
             tmp = tmp->siguiente;
         }
         Alistados->push(pedido);
+        Alistadores->push(this);
     }
 };
