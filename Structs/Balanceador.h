@@ -3,6 +3,7 @@ struct Balanceador {
     queue<ListaCompleja*> Altaprioridad;
     queue<ListaCompleja*> Bajaprioridad;
     queue<ListaCompleja*> PedidoInstantaneo;
+    ListaCompleja * ListaProductos;
     int Estado; // 0 = Apagado, 1 = Encendido, 2 = En proceso
 
     //constructor 
@@ -11,80 +12,75 @@ struct Balanceador {
         for (int i = 0; i < 10; i++) {
             ArrayConstructores[i] = new Constructor();
         }
+        ListaProductos = new ListaCompleja();
         // Inicializa las colas aquí, por ejemplo, si deseas que estén vacías:
         while (!Altaprioridad.empty()) Altaprioridad.pop();
         while (!Bajaprioridad.empty()) Bajaprioridad.pop();
         while (!PedidoInstantaneo.empty()) PedidoInstantaneo.pop();
     }
 
-    Balanceador(queue<ListaCompleja*> Altaprioridad, queue<ListaCompleja*> Bajaprioridad, queue<ListaCompleja*> PedidoInstantaneo, int Estado){
+    Balanceador(int Estado, ListaCompleja * ListaProductos, queue<ListaCompleja*> Altaprioridad, queue<ListaCompleja*> Bajaprioridad, queue<ListaCompleja*> PedidoInstantaneo) {
         this->Altaprioridad = Altaprioridad;
         this->Bajaprioridad = Bajaprioridad;
         this->PedidoInstantaneo = PedidoInstantaneo;
+        this->ListaProductos = ListaProductos; 
         this->Estado = Estado;
     }
 
     //Metodos
-    void ComprobarPedido(ListaSimple * ListaPedidos, ListaCompleja * ListaClientes){
+    void MetePedidoEncola(ListaSimple * ListaPedidos, ListaCompleja * ListaClientes){
         //Esta Funcion Unicamente Comprueba un pedidos en ListaPedidos en caso da dar error los mueves al archivo de error
-        NodoSimple  * tmp = ListaPedidos->primerNodo;
-        ListaCompleja * PedidoActual= new ListaCompleja(); 
+        ListaCompleja * PedidoActual= LeerArchivo(ListaPedidos->primerNodo , "Pedido");
         ListaSimple * Bitacora = new ListaSimple();
-        while (tmp != NULL){
-            PedidoActual = LeerArchivo(tmp , "Pedido");
         int Prioridad = RetornaPrioridad(ListaClientes, PedidoActual->primerNodo->siguiente->lista->primerNodo->dato);
+
+        cout << "Se esta procesando el pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << endl;
         Bitacora->agregar("Pedido:\t\t" + PedidoActual->primerNodo->lista->primerNodo->dato);
         Bitacora->agregar("Cliente:\t\t" + PedidoActual->primerNodo->siguiente->lista->primerNodo->dato);
         PedidoActual->agregar(Bitacora);
         if (Prioridad == 10){
-            // Rcupera la hora del sistema y la agrega a la bitacora
+            // Recupera la hora del sistema y la agrega a la bitacora
             Bitacora->agregar("Cola:\t\t Alta Prioridad - " + HoraSistema());
             Altaprioridad.push(PedidoActual);
-        }
-        if (Prioridad  < 10){
+        }else if (Prioridad  < 10){
             Bitacora->agregar("Cola:\t\t Baja Prioridad - " + HoraSistema());
             Bajaprioridad.push(PedidoActual);
-        }
-        if (Prioridad == 11){
+        }else if (Prioridad == 11){
+            cout << "Se metio a la cola de pedido instantaneo" << endl;
             Bitacora->agregar("Cola:\t\t Pedido Instantaneo - " + HoraSistema());
             PedidoInstantaneo.push(PedidoActual);
-        }
-        if (PedidoActual->primerNodo->siguiente->siguiente == NULL)
+        }else if (PedidoActual->primerNodo->siguiente->siguiente == NULL)
         // TODO Codigo que mueve archivos a error, no es un pedido
-        tmp = tmp -> siguiente;
-        } 
-        cout << "Se metieron todos los pedidos a las colas" << endl;
-        return ;
+        cout << "Se metio el pedido a la cola" << endl;
     }
 
     void IniciaPedido(){
         //Esta funcion inicia el pedido, si no hay pedidos en las colas, no hace nada
         if (Altaprioridad.empty() && Bajaprioridad.empty() && PedidoInstantaneo.empty()){
             cout << "No hay pedidos en las colas" << endl;
-        }else{
+        }else if (Altaprioridad.empty() && Bajaprioridad.empty() && !PedidoInstantaneo.empty()){
             ListaCompleja * PedidoActual;
             NodoComplejo * tmp;
             if (!Altaprioridad.empty()){
                 PedidoActual = Altaprioridad.front();
                 Altaprioridad.pop();
-                tmp = PedidoActual->primerNodo->siguiente->siguiente;
-            }else if (!Bajaprioridad.empty()){
-                PedidoActual = Bajaprioridad.front();
-                Bajaprioridad.pop();
-                tmp = PedidoActual->primerNodo->siguiente->siguiente;  
-            }else{
-                PedidoActual = PedidoInstantaneo.front();
-                PedidoInstantaneo.pop();
-                tmp = PedidoActual->primerNodo->siguiente->siguiente;  
-            }
+                NodoComplejo * tmp= PedidoActual->primerNodo->siguiente->siguiente;
             cout << "El pedido:" << PedidoActual->primerNodo->lista->primerNodo->dato << "Esta siendo procesado" << endl;
             while (tmp != NULL){
                 string CodigoProducto = tmp -> lista -> primerNodo -> dato;
                 int cantidad = stoi(tmp -> lista -> primerNodo -> siguiente -> dato);
-                // TODO: Buscar el producto en el almacen
+                NodoComplejo * ProductoBuscado = ListaProductos->Buscar(CodigoProducto);
+                int CantidadProductoBuscado = stoi(ProductoBuscado->lista->primerNodo->siguiente->dato);
+                if (CantidadProductoBuscado - cantidad < 0){
+                    //Se llaman a los constructores TODO
+                }else if (CantidadProductoBuscado - cantidad >= 0){
+                    ProductoBuscado->lista->primerNodo->siguiente->dato = to_string(CantidadProductoBuscado - cantidad);
+                    //TODO Enviar a cola de almacen 
+                }
                 tmp = tmp -> siguiente;
+
             }
         }
     }
 
-};
+}};

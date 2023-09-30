@@ -7,34 +7,31 @@ int main(int argc, char** argv) {
     cout << "--------------------------------------------------------------------" << endl; 
     cout << "Beta de la implementacion de la lista de Productos" << endl;
     ListaCompleja * listaDeProductos = LeerArchivo("Productos", "txt", "Producto");
-    listaDeProductos->primerNodo->imprimir();
-    listaDeProductos->imprimir();
-
+    //listaDeProductos->imprimir();
+    listaDeProductos->primerNodo->lista->primerNodo->imprimir();
+    listaDeProductos->primerNodo->lista->Buscar("X09");
     cout << "----------------------------------------------------------------------------------" << endl;
     cout << "Beta de la implementacion de la lista de Clientes" << endl;
     ListaSimple *ListaClientesArchivo = LeerDirectorio("Clientes", "txt");
     ListaClientesArchivo->imprimir();
     NodoSimple *nodo = ListaClientesArchivo->primerNodo;
-    while (nodo != NULL){
-        cout << nodo->dato << endl;
-        ListaCompleja *ListaClientes = LeerArchivo(nodo, "Cliente");
-        ListaClientes->imprimir();
-        nodo = nodo->siguiente;
-        cout << "-----------------------------------" << endl;
-    }
+    ListaCompleja *ListaClientes = LeerArchivo(nodo, "Cliente");
+    ListaClientes->imprimir();
     cout << "----------------------------------------------------------------------------------" << endl;
     cout << "Beta de la implementacion de pedidos" << endl;
-    ListaSimple *ListaPedidos = LeerDirectorio("Pedidos//Pendientes", "txt");
-    ListaPedidos->imprimir();
-    NodoSimple * tmp = ListaPedidos->primerNodo;
-    ListaCompleja * ListaPedidosCompleja;
-    while(tmp != NULL){
-        ListaPedidosCompleja = LeerArchivo(tmp, "Pedido");
-        tmp = tmp->siguiente;
-    }
-
-    ListaPedidosCompleja->imprimir();
     
+    ListaSimple *ListaNombresDePedidos = LeerDirectorio("Pedidos//Pendientes", "txt");
+    ListaNombresDePedidos->imprimir();
+    queue<ListaCompleja*> Altaprioridad;
+    queue<ListaCompleja*> Bajaprioridad;
+    queue<ListaCompleja*> PedidoInstantaneo;
+
+    Balanceador * balanceador = new Balanceador(1, listaDeProductos, Altaprioridad, Bajaprioridad, PedidoInstantaneo);
+    ListaCompleja * PedidoActual = LeerArchivo(ListaNombresDePedidos->primerNodo , "Pedido");
+    balanceador->MetePedidoEncola(ListaNombresDePedidos, ListaClientes);
+    bool aja = balanceador->Altaprioridad.empty();
+    cout << aja << endl;
+    balanceador->PedidoInstantaneo.front()->imprimir();
     
     cout << "----------------------------------------------------------------------------------" << endl;
 

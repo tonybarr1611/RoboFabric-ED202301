@@ -1,6 +1,7 @@
 struct Constructor{
     string Nombre; // Nombre ejemplo: Constructor 1
     int Estado; //Apagado = 0, Encendido = 1, En proceso = 2
+    bool Disponibilidad; // Disponibilidad del constructor
     string Codigo; // Codigo del producto que esta elaborando
 
     //constructor

@@ -30,6 +30,7 @@ ListaCompleja *LeerArchivo(ListaSimple*, string); // Lista de archivos, tipo de 
 ListaCompleja *LeerArchivo(NodoSimple*, string); // Nodo de archivos, tipo de lista
 int RetornaPrioridad(ListaCompleja *, string);
 
+
 // Estructuras 
 struct NodoSimple {
     // NodoSimple es un nodo de ListaSimple
@@ -90,17 +91,15 @@ struct ListaSimple{
         agregar(nuevo);
     }
 
-    int Buscar(string dato){
+    NodoSimple * Buscar(string dato){
         NodoSimple * tmp = primerNodo;
-        int i = 0;
         while(tmp != NULL){
             if(tmp->dato == dato){
-                return i;
+                return tmp;
             }
             tmp = tmp -> siguiente;
-            i++;
         }
-        return -1;
+        return NULL;
     }
 
     int lenLista(){
@@ -246,7 +245,7 @@ struct ListaCompleja{
         //Se puede usar para los clientes y productos al tener un unico nombre indicativo de la lista
         NodoComplejo * tmp = primerNodo;
         while(tmp != NULL){
-            if(tmp->lista->Buscar(dato)==0){
+            if(tmp->lista->Buscar(dato) != NULL){
                 return tmp;
             }
             tmp = tmp -> siguiente;
