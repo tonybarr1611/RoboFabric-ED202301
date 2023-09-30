@@ -303,6 +303,8 @@ struct Cola{
 
 #include "Structs/Bodega.h"
 
+#include "Structs/Empacador.h"
+
 #include "Structs/Balanceador.h"
 
 #include "Funciones.h"

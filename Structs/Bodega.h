@@ -72,13 +72,14 @@ struct Bodega {
 
     void continuarPedido(){
         // Funcion que debe ejecutarse en un thread constante
-        if (!paraAlisto->empty()){
+        if (!paraAlisto->empty() && !Alistadores->empty()){
             ListaCompleja * pedido = paraAlisto->front();
             paraAlisto->pop();
             Alistador * alistador = Alistadores->front();
             Alistadores->pop();
-            std::thread hilo(&Alistador::Alistar, pedido);
-            hilo.detach();
+            // // Revisar hilo
+            // std::thread hilo(&Alistador::Alistar, alistador, pedido);
+            // hilo.detach();
         }else{
             return;
         }
