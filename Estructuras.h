@@ -18,6 +18,7 @@ struct Cola;
 struct Producto;
 struct Constructor;
 struct Almacen;
+struct Alistador;
 struct Bodega;
 struct Balanceador;
 
@@ -297,6 +298,8 @@ struct Cola{
 #include "Structs/Constructor.h"
 
 #include "Structs/Almacen.h"
+
+#include "Structs/Alistador.h"
 
 #include "Structs/Bodega.h"
 
