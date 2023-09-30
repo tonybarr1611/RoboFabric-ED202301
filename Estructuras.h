@@ -204,8 +204,8 @@ struct ListaCompleja{
         agregar(new NodoComplejo(dato));
     }
 
-    void agregar(string dato, ListaSimple * lista){
-        agregar(new NodoComplejo(dato, lista));
+    void agregar(string tipo, ListaSimple * lista){
+        agregar(new NodoComplejo(tipo, lista));
     }
 
     void agregar(ListaCompleja * lista){

@@ -25,7 +25,7 @@ struct Constructor{
         cout << "Codigo: " << Codigo << "\n";
     }
 
-    void AgregarCantidadAlProducto(ListaCompleja * listaDeProductos){
+    void AgregarCantidadAlProducto(ListaCompleja * listaDeProductos, string Codigo){
         NodoComplejo* tmp = listaDeProductos->Buscar(Codigo);
         //Variables
         int cantidadAlmacenada= stoi(tmp -> lista -> primerNodo -> siguiente -> dato);

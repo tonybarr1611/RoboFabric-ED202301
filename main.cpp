@@ -32,6 +32,7 @@ int main(int argc, char** argv) {
     balanceador->MetePedidoEncola(ListaNombresDePedidos, ListaClientes);
     balanceador->PedidoInstantaneo.front()->imprimir();
     balanceador->IniciaPedido();
+    listaDeProductos->imprimir();
     
     cout << "----------------------------------------------------------------------------------" << endl;
 

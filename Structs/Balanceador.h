@@ -37,7 +37,7 @@ struct Balanceador {
         cout << "Se esta procesando el pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << endl;
         Bitacora->agregar("Pedido:\t\t" + PedidoActual->primerNodo->lista->primerNodo->dato);
         Bitacora->agregar("Cliente:\t\t" + PedidoActual->primerNodo->siguiente->lista->primerNodo->dato);
-        PedidoActual->agregar(Bitacora);
+        PedidoActual->agregar("Bitacora", Bitacora);
         if (Prioridad == 10){
             // Recupera la hora del sistema y la agrega a la bitacora
             Bitacora->agregar("Cola:\t\t Alta Prioridad - " + HoraSistema());
@@ -76,21 +76,21 @@ struct Balanceador {
             return; 
         }
         NodoComplejo * tmp= PedidoActual->primerNodo->siguiente->siguiente;
-        cout << "El pedido:" << PedidoActual->primerNodo->lista->primerNodo->dato << "Esta siendo procesado" << endl;
-        while (tmp != NULL){
+        cout << "El pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << ". Esta siendo procesado" << endl;
+        while (tmp != NULL && tmp -> tipo != "Bitacora"){
             string CodigoProducto = tmp -> lista -> primerNodo -> dato;
-            int cantidad = stoi(tmp -> lista -> primerNodo -> siguiente -> dato);
+            int CantidadNecesitada = stoi(tmp -> lista -> primerNodo -> siguiente -> dato);
             NodoComplejo * ProductoBuscado = ListaProductos->Buscar(CodigoProducto);
-            int CantidadProductoBuscado = stoi(ProductoBuscado->lista->primerNodo->siguiente->dato);
-            if (CantidadProductoBuscado - cantidad < 0){
+            int CantidadAlmacenada = stoi(ProductoBuscado->lista->primerNodo->siguiente->dato);
+            int Res = CantidadAlmacenada - CantidadNecesitada;
+            if (Res < 0){
                 //Se llaman a los constructores TODO
-            }else if (CantidadProductoBuscado - cantidad >= 0){
+            }else if (Res >= 0){
                 cout << "Se esta procesando el producto: " << CodigoProducto << endl;
-                ProductoBuscado->lista->primerNodo->siguiente->dato = to_string(CantidadProductoBuscado - cantidad);
-                //TODO Enviar a cola de almacen 
+                ProductoBuscado->lista->primerNodo->siguiente->dato = to_string(Res);
             }
             tmp = tmp -> siguiente;
-
         }
+        //TODO Enviar a cola de almacen 
     }
 };
