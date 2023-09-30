@@ -2,6 +2,7 @@ struct Alistador{
     bool encendido;
     int id; // 1-6
     ListaCompleja * listaProductos;
+    queue<ListaCompleja*> * Alistados;
 
     Alistador(){
         encendido = true;
@@ -43,5 +44,6 @@ struct Alistador{
             std::this_thread::sleep_for(std::chrono::seconds(tiempo));
             tmp = tmp->siguiente;
         }
+        Alistados->push(pedido);
     }
 };
