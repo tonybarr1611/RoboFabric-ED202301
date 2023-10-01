@@ -28,7 +28,7 @@ struct Balanceador {
         this->Estado = Estado;
         this->pedidosAlmacen = pedidosAlmacen;
         for (int i = 0; i < 10; i++) {
-            ArrayConstructores[i] = new Constructor("Constructor " + to_string(i), 1, true, "D");
+            ArrayConstructores[i] = new Constructor("Constructor " + to_string(i), 1, true, "D", ListaProductos);
         }
     }
 
@@ -91,7 +91,7 @@ struct Balanceador {
         ProductoBuscado->lista->primerNodo->siguiente->dato = "0";
         Constructor * ConstructorValido = RetornaConstructorValido(ProductoBuscado->lista->primerNodo->siguiente->siguiente->dato);
         // TODO llamar por medio de thread
-        ConstructorValido->AgregarCantidadAlProducto(ListaProductos, CodigoProducto, ProductosNecesitados);
+        ConstructorValido->AgregarCantidadAlProducto(CodigoProducto, ProductosNecesitados);
         return ConstructorValido;
     }
 
@@ -107,6 +107,19 @@ struct Balanceador {
             cout << "El pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << ". Ha sido procesado" << endl;
             pedidosAlmacen->push(PedidoActual);
         }
+    }
+
+    void VerificaProductos(int cantidad, queue<Constructor*> ConstructoresUsados){
+        //Verifica que hayan productos en el almacen si no pone los constructores a trabajar
+        if (cantidad < 0){
+            cout << "No hay suficientes productos: " << CodigoProducto << " por lo tanto se construiran" << endl;
+            Res = CantidadNecesitada - CantidadAlmacenada;
+            ConstructoresUsados.push(ConstruirProductos(Res, ProductoBuscado));
+
+        }else if (cantidad >= 0){
+            cout << "Se esta procesando el producto: " << CodigoProducto << endl;
+            ProductoBuscado->lista->primerNodo->siguiente->dato = to_string(Res);
+            }
     }
 
     void IniciaPedido(){
@@ -126,15 +139,7 @@ struct Balanceador {
             NodoComplejo * ProductoBuscado = ListaProductos->Buscar(CodigoProducto);
             int CantidadAlmacenada = stoi(ProductoBuscado->lista->primerNodo->siguiente->dato);
             int Res = CantidadAlmacenada - CantidadNecesitada;
-            if (Res < 0){
-                cout << "No hay suficientes productos: " << CodigoProducto << " por lo tanto se construiran" << endl;
-                Res = CantidadNecesitada - CantidadAlmacenada;
-                ConstructoresUsados.push(ConstruirProductos(Res, ProductoBuscado));
-
-            }else if (Res >= 0){
-                cout << "Se esta procesando el producto: " << CodigoProducto << endl;
-                ProductoBuscado->lista->primerNodo->siguiente->dato = to_string(Res);
-            }
+            VerificaProductos(Res, ConstructoresUsados)
             tmp = tmp -> siguiente;
         }
         // TODO llamar por medio de thread

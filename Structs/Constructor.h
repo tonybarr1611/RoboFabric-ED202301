@@ -1,4 +1,5 @@
 struct Constructor{
+    ListaCompleja * ListaProductos;
     string Nombre; // Nombre ejemplo: Constructor 1
     int Estado; //Apagado = 0, Encendido = 1, En proceso = 2
     bool Disponibilidad; // Disponibilidad del constructor
@@ -12,7 +13,8 @@ struct Constructor{
         tipoProducto = "D";
     }
 
-    Constructor(string Nombre, int Estado, bool Disponibilidad, string tipoProducto){
+    Constructor(string Nombre, int Estado, bool Disponibilidad, string tipoProducto, ListaCompleja * ListaProductos){
+        this->ListaProductos = ListaProductos;
         this->Nombre = Nombre;
         this->Estado = Estado;
         this->tipoProducto = tipoProducto;
@@ -28,10 +30,10 @@ struct Constructor{
         cout << "Disponibilidad: " << Disponibilidad << "\n";
     }
 
-    void AgregarCantidadAlProducto(ListaCompleja * listaDeProductos, string Codigo, int Cantidad){
+    void AgregarCantidadAlProducto(string Codigo, int Cantidad){
         // Solo llamar por medio de thread
         //Variables
-        NodoComplejo* tmp = listaDeProductos->Buscar(Codigo);
+        NodoComplejo* tmp = ListaProductos->Buscar(Codigo);
         int tiempoDeElboracion= stoi(tmp -> lista -> primerNodo -> siguiente -> siguiente -> dato);
         int TiempoTotal = tiempoDeElboracion * Cantidad;
 
