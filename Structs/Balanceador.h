@@ -120,8 +120,9 @@ struct Balanceador {
         NodoComplejo * tmp= PedidoActual->primerNodo->siguiente->siguiente;
         cout << "El pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << ". Esta siendo procesado" << endl;
         while (tmp != NULL && tmp -> tipo != "Bitacora"){
-            string CodigoProducto = tmp -> lista -> primerNodo -> dato;
-            int CantidadNecesitada = stoi(tmp -> lista -> primerNodo -> siguiente -> dato);
+            NodoSimple * tmp2 = tmp -> lista -> primerNodo;
+            string CodigoProducto = tmp2 -> dato;
+            int CantidadNecesitada = stoi(tmp2-> siguiente -> dato);
             NodoComplejo * ProductoBuscado = ListaProductos->Buscar(CodigoProducto);
             int CantidadAlmacenada = stoi(ProductoBuscado->lista->primerNodo->siguiente->dato);
             int Res = CantidadAlmacenada - CantidadNecesitada;

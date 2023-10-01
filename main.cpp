@@ -25,12 +25,14 @@ int main(int argc, char** argv) {
     queue<ListaCompleja*> Altaprioridad;
     queue<ListaCompleja*> Bajaprioridad;
     queue<ListaCompleja*> PedidoInstantaneo;
+    queue<ListaCompleja*> * pedidosAlmacen = new queue<ListaCompleja*>;
 
-    Balanceador * balanceador = new Balanceador(1, listaDeProductos, Altaprioridad, Bajaprioridad, PedidoInstantaneo);
+    Balanceador * balanceador = new Balanceador(1, listaDeProductos, Altaprioridad, Bajaprioridad, PedidoInstantaneo, pedidosAlmacen);
     ListaCompleja * PedidoActual = LeerArchivo(ListaNombresDePedidos->primerNodo , "Pedido");
     balanceador->ArrayConstructores[2]->imprimir();
     balanceador->MetePedidoEncola(ListaNombresDePedidos, ListaClientes);
     balanceador->IniciaPedido();
+    pedidosAlmacen->front()->imprimir();
     
     
     cout << "----------------------------------------------------------------------------------" << endl;
