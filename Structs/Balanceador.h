@@ -84,17 +84,13 @@ struct Balanceador {
         return NULL;
     }
 
-    void ConstruirProductos(int ProductosNecesitados, listaCompleja * ProductoBuscado){
+    void ConstruirProductos(int ProductosNecesitados, NodoComplejo * ProductoBuscado){
+        string CodigoProducto = ProductoBuscado -> lista -> primerNodo -> dato;
         ProductoBuscado->lista->primerNodo->siguiente->dato = "0";
-        cout << "No hay suficiente productos: " << CodigoProducto << "por lo tanto se construiran" << endl;
         Constructor * ConstructorValido = RetornaConstructorValido(ProductoBuscado->lista->primerNodo->siguiente->siguiente->dato);
-        ConstructorValido->AgregarCantidadAlProducto(ListaProductos, CodigoProducto, Res);
-
-        while (ConstructorValido->Disponibilidad == false ){
-            cout << "Construyendo" << endl;
-        }
+        ConstructorValido->AgregarCantidadAlProducto(ListaProductos, CodigoProducto, ProductosNecesitados);
     }
-    
+
     void IniciaPedido(){
         //Esta funcion inicia el pedido, si no hay pedidos en las colas, no hace nada
         ListaCompleja * PedidoActual = RetornaPedido();
@@ -111,6 +107,7 @@ struct Balanceador {
             int CantidadAlmacenada = stoi(ProductoBuscado->lista->primerNodo->siguiente->dato);
             int Res = CantidadAlmacenada - CantidadNecesitada;
             if (Res < 0){
+                cout << "No hay suficientes productos: " << CodigoProducto << " por lo tanto se construiran" << endl;
                 Res = CantidadNecesitada - CantidadAlmacenada;
                 ConstruirProductos(Res, ProductoBuscado);
 

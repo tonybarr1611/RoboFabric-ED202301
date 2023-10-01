@@ -35,9 +35,9 @@ struct Constructor{
         int TiempoTotal = tiempoDeElboracion * Cantidad;
 
         //Proceso
-        cout << "El constructor" << Nombre << " esta elaborando" << Cantidad << "de productos" << Codigo << "\n";
+        cout << Nombre << " esta elaborando " << Cantidad << " de productos" << Codigo << "\n";
         Disponibilidad = false;
         std::this_thread::sleep_for(std::chrono::seconds(TiempoTotal));
-        cout << "El constructor" << Nombre << " ha terminado de elaborar" << Cantidad << "de productos" << Codigo << "\n";
+        cout << Nombre << " ha terminado de elaborar " << Cantidad << " de productos" << Codigo << "\n";
         Disponibilidad = true;
 }};
