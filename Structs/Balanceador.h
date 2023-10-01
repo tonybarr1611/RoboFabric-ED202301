@@ -91,42 +91,47 @@ struct Balanceador {
         ProductoBuscado->lista->primerNodo->siguiente->dato = "0";
         Constructor * ConstructorValido = RetornaConstructorValido(ProductoBuscado->lista->primerNodo->siguiente->siguiente->dato);
         // TODO llamar por medio de thread
-        ConstructorValido->AgregarCantidadAlProducto(CodigoProducto, ProductosNecesitados);
+        ConstructorValido->Disponibilidad = false;
+        std::thread hilo(&Constructor::AgregarCantidadAlProducto, ConstructorValido, CodigoProducto, ProductosNecesitados);
+        // ConstructorValido->AgregarCantidadAlProducto(CodigoProducto, ProductosNecesitados);
+        hilo.detach();
+        ConstructorValido->imprimir();
         return ConstructorValido;
     }
 
-    void validarFinalPedido(queue<Constructor*> ConstructoresUsados, ListaCompleja * PedidoActual){
+    void validarFinalPedido(queue<Constructor*> * ConstructoresUsados, ListaCompleja * PedidoActual){
         //Esta funcion valida si el pedido se completo, si no se completo, sigue loopeando hasta que lo este
         // Solo llamar por medio de thread
-        while (!ConstructoresUsados.empty()){
-            if (ConstructoresUsados.front()->Disponibilidad == true){
-                ConstructoresUsados.pop();
+        cout << "ESTADO COLA:  " << ConstructoresUsados->size() << endl;
+        while (!ConstructoresUsados->empty()){
+            if (ConstructoresUsados->front()->Disponibilidad == true){
+                ConstructoresUsados->pop();
             }
         }
-        if (ConstructoresUsados.empty()){
+        if (ConstructoresUsados->empty()){
             cout << "El pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << ". Ha sido procesado" << endl;
             pedidosAlmacen->push(PedidoActual);
         }
     }
 
-    void VerificaProductos(int cantidad, queue<Constructor*> ConstructoresUsados, string CodigoProducto){
+    void VerificaProductos(int cantidad, queue<Constructor*> * ConstructoresUsados, string CodigoProducto){
         //Verifica que hayan productos en el almacen si no pone los constructores a trabajar
         NodoComplejo * ProductoBuscado = ListaProductos->Buscar(CodigoProducto);
         if (cantidad < 0){
             cout << "No hay suficientes productos: " << CodigoProducto << " por lo tanto se construiran" << endl;
             cantidad = -cantidad;
-            ConstructoresUsados.push(ConstruirProductos(cantidad, ProductoBuscado));
-
+            ConstructoresUsados->push(ConstruirProductos(cantidad, ProductoBuscado));
+            ConstructoresUsados->front()->imprimir();
         }else if (cantidad >= 0){
             cout << "Se esta procesando el producto: " << CodigoProducto << endl;
             ProductoBuscado->lista->primerNodo->siguiente->dato = to_string(cantidad);
-            }
+        }
     }
 
     void IniciaPedido(){
         //Esta funcion inicia el pedido, si no hay pedidos en las colas, no hace nada
         ListaCompleja * PedidoActual = RetornaPedido();
-        queue<Constructor*> ConstructoresUsados;
+        queue<Constructor*> * ConstructoresUsados = new queue<Constructor*>();
         if (PedidoActual == NULL){
             cout << "No hay pedidos en las colas" << endl;
             return; 
@@ -144,6 +149,7 @@ struct Balanceador {
             tmp = tmp -> siguiente;
         }
         // TODO llamar por medio de thread
-        validarFinalPedido(ConstructoresUsados, PedidoActual);
+        std::thread hilo(&Balanceador::validarFinalPedido, this, ConstructoresUsados, PedidoActual);
+        hilo.detach();
     }
 };
