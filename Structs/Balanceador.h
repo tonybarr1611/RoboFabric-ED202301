@@ -25,6 +25,9 @@ struct Balanceador {
         this->PedidoInstantaneo = PedidoInstantaneo;
         this->ListaProductos = ListaProductos; 
         this->Estado = Estado;
+        for (int i = 0; i < 10; i++) {
+            ArrayConstructores[i] = new Constructor("Constructor " + to_string(i), 1, true, 3);
+        }
     }
 
     //Metodos
@@ -91,6 +94,7 @@ struct Balanceador {
             }
             tmp = tmp -> siguiente;
         }
+        cout << "El pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << ". Ha sido procesado" << endl;
         //TODO Enviar a cola de almacen 
     }
 };

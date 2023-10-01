@@ -28,11 +28,7 @@ int main(int argc, char** argv) {
 
     Balanceador * balanceador = new Balanceador(1, listaDeProductos, Altaprioridad, Bajaprioridad, PedidoInstantaneo);
     ListaCompleja * PedidoActual = LeerArchivo(ListaNombresDePedidos->primerNodo , "Pedido");
-    balanceador->IniciaPedido();
-    balanceador->MetePedidoEncola(ListaNombresDePedidos, ListaClientes);
-    balanceador->PedidoInstantaneo.front()->imprimir();
-    balanceador->IniciaPedido();
-    listaDeProductos->imprimir();
+   balanceador->ArrayConstructores[2]->imprimir();
     
     cout << "----------------------------------------------------------------------------------" << endl;
 
