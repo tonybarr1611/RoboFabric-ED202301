@@ -28,8 +28,8 @@ int main(int argc, char** argv) {
 
     Balanceador * balanceador = new Balanceador(1, listaDeProductos, Altaprioridad, Bajaprioridad, PedidoInstantaneo);
     ListaCompleja * PedidoActual = LeerArchivo(ListaNombresDePedidos->primerNodo , "Pedido");
-   balanceador->ArrayConstructores[2]->imprimir();
-    
+    balanceador->ArrayConstructores[2]->imprimir();
+    balanceador->RetornaConstructorValidoonstructorValido()
     cout << "----------------------------------------------------------------------------------" << endl;
 
     return 0;

@@ -26,7 +26,7 @@ struct Balanceador {
         this->ListaProductos = ListaProductos; 
         this->Estado = Estado;
         for (int i = 0; i < 10; i++) {
-            ArrayConstructores[i] = new Constructor("Constructor " + to_string(i), 1, true, 3);
+            ArrayConstructores[i] = new Constructor("Constructor " + to_string(i), 1, true, "D");
         }
     }
 
@@ -71,6 +71,30 @@ struct Balanceador {
         }
         return PedidoActual;
     }
+
+    Constructor * RetornaConstructorValido(string tipoProducto){
+        //Esta funcion retorna el constructor que se va a usar
+        for (int i = 0; i < 10; i++){
+            if (ArrayConstructores[i]->tipoProducto == tipoProducto && ArrayConstructores[i]->Disponibilidad == true){
+                return ArrayConstructores[i];
+            }else if (ArrayConstructores[i]->tipoProducto == "D" && ArrayConstructores[i]->Disponibilidad == true){
+                return ArrayConstructores[i];
+            }
+        }
+        return NULL;
+    }
+
+    void ConstruirProductos(int ProductosNecesitados, listaCompleja * ProductoBuscado){
+        ProductoBuscado->lista->primerNodo->siguiente->dato = "0";
+        cout << "No hay suficiente productos: " << CodigoProducto << "por lo tanto se construiran" << endl;
+        Constructor * ConstructorValido = RetornaConstructorValido(ProductoBuscado->lista->primerNodo->siguiente->siguiente->dato);
+        ConstructorValido->AgregarCantidadAlProducto(ListaProductos, CodigoProducto, Res);
+
+        while (ConstructorValido->Disponibilidad == false ){
+            cout << "Construyendo" << endl;
+        }
+    }
+    
     void IniciaPedido(){
         //Esta funcion inicia el pedido, si no hay pedidos en las colas, no hace nada
         ListaCompleja * PedidoActual = RetornaPedido();
@@ -87,7 +111,9 @@ struct Balanceador {
             int CantidadAlmacenada = stoi(ProductoBuscado->lista->primerNodo->siguiente->dato);
             int Res = CantidadAlmacenada - CantidadNecesitada;
             if (Res < 0){
-                //Se llaman a los constructores TODO
+                Res = CantidadNecesitada - CantidadAlmacenada;
+                ConstruirProductos(Res, ProductoBuscado);
+
             }else if (Res >= 0){
                 cout << "Se esta procesando el producto: " << CodigoProducto << endl;
                 ProductoBuscado->lista->primerNodo->siguiente->dato = to_string(Res);
