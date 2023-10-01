@@ -109,16 +109,17 @@ struct Balanceador {
         }
     }
 
-    void VerificaProductos(int cantidad, queue<Constructor*> ConstructoresUsados){
+    void VerificaProductos(int cantidad, queue<Constructor*> ConstructoresUsados, string CodigoProducto){
         //Verifica que hayan productos en el almacen si no pone los constructores a trabajar
+        NodoComplejo * ProductoBuscado = ListaProductos->Buscar(CodigoProducto);
         if (cantidad < 0){
             cout << "No hay suficientes productos: " << CodigoProducto << " por lo tanto se construiran" << endl;
-            Res = CantidadNecesitada - CantidadAlmacenada;
-            ConstructoresUsados.push(ConstruirProductos(Res, ProductoBuscado));
+            cantidad = -cantidad;
+            ConstructoresUsados.push(ConstruirProductos(cantidad, ProductoBuscado));
 
         }else if (cantidad >= 0){
             cout << "Se esta procesando el producto: " << CodigoProducto << endl;
-            ProductoBuscado->lista->primerNodo->siguiente->dato = to_string(Res);
+            ProductoBuscado->lista->primerNodo->siguiente->dato = to_string(cantidad);
             }
     }
 
@@ -133,13 +134,13 @@ struct Balanceador {
         NodoComplejo * tmp= PedidoActual->primerNodo->siguiente->siguiente;
         cout << "El pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << ". Esta siendo procesado" << endl;
         while (tmp != NULL && tmp -> tipo != "Bitacora"){
+            //Variables
             NodoSimple * tmp2 = tmp -> lista -> primerNodo;
             string CodigoProducto = tmp2 -> dato;
             int CantidadNecesitada = stoi(tmp2-> siguiente -> dato);
-            NodoComplejo * ProductoBuscado = ListaProductos->Buscar(CodigoProducto);
-            int CantidadAlmacenada = stoi(ProductoBuscado->lista->primerNodo->siguiente->dato);
+            int CantidadAlmacenada = stoi(ListaProductos->Buscar(CodigoProducto)->lista->primerNodo->siguiente->dato);
             int Res = CantidadAlmacenada - CantidadNecesitada;
-            VerificaProductos(Res, ConstructoresUsados)
+            VerificaProductos(Res, ConstructoresUsados, CodigoProducto);
             tmp = tmp -> siguiente;
         }
         // TODO llamar por medio de thread
