@@ -32,6 +32,11 @@ int main(int argc, char** argv) {
     balanceador->ArrayConstructores[2]->imprimir();
     balanceador->MetePedidoEncola(ListaNombresDePedidos, ListaClientes);
     balanceador->IniciaPedido();
+    cout << "hmmmmmmmmmmmmmm" << endl;
+    while (pedidosAlmacen->empty()) {
+        cout << "hmmmmmmmmmmmmmm" << endl;
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
     pedidosAlmacen->front()->imprimir();
     
     
