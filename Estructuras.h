@@ -18,6 +18,8 @@ struct Cola;
 struct Producto;
 struct Constructor;
 struct Almacen;
+struct Alistador;
+struct Bodega;
 struct Balanceador;
 
 // Declaraciones de Funciones
@@ -296,6 +298,12 @@ struct Cola{
 #include "Structs/Constructor.h"
 
 #include "Structs/Almacen.h"
+
+#include "Structs/Alistador.h"
+
+#include "Structs/Bodega.h"
+
+#include "Structs/Empacador.h"
 
 #include "Structs/Balanceador.h"
 

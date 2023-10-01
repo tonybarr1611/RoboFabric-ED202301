@@ -35,5 +35,18 @@ int main(int argc, char** argv) {
     
     cout << "----------------------------------------------------------------------------------" << endl;
 
+    cout << "Beta de la implementacion de la lista de Alistadores" << endl;
+    Alistador * alistador = new Alistador(true, 1, listaDeProductos);
+    alistador->imprimir();
+    PedidoActual->primerNodo->siguiente->siguiente->imprimir();
+    // alistador->Alistar(PedidoActual);
+
+
+    cout << "----------------------------------------------------------------------------------" << endl;
+    cout << "Beta de la implementacion de la lista de Empacadores" << endl;
+    queue<ListaCompleja*> * PorFacturar = new queue<ListaCompleja*>;
+    Empacador * empacador = new Empacador(true, PorFacturar);
+    
+    empacador->Empacar(PedidoActual);
     return 0;
 }
