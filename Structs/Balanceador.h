@@ -25,6 +25,9 @@ struct Balanceador {
         this->PedidoInstantaneo = PedidoInstantaneo;
         this->ListaProductos = ListaProductos; 
         this->Estado = Estado;
+        for (int i = 0; i < 10; i++) {
+            ArrayConstructores[i] = new Constructor("Constructor " + to_string(i), 1, true, "D");
+        }
     }
 
     //Metodos
@@ -37,7 +40,7 @@ struct Balanceador {
         cout << "Se esta procesando el pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << endl;
         Bitacora->agregar("Pedido:\t\t" + PedidoActual->primerNodo->lista->primerNodo->dato);
         Bitacora->agregar("Cliente:\t\t" + PedidoActual->primerNodo->siguiente->lista->primerNodo->dato);
-        PedidoActual->agregar(Bitacora);
+        PedidoActual->agregar("Bitacora", Bitacora);
         if (Prioridad == 10){
             // Recupera la hora del sistema y la agrega a la bitacora
             Bitacora->agregar("Cola:\t\t Alta Prioridad - " + HoraSistema());
@@ -53,34 +56,68 @@ struct Balanceador {
         // TODO Codigo que mueve archivos a error, no es un pedido
         cout << "Se metio el pedido a la cola" << endl;
     }
+    ListaCompleja * RetornaPedido(){
+        //Esta funcion retorna el pedido que se va a procesar
+        ListaCompleja * PedidoActual = NULL;
+        if (!Altaprioridad.empty()){
+            PedidoActual = Altaprioridad.front();
+            Altaprioridad.pop();
+        }else if (!Bajaprioridad.empty()){
+            PedidoActual = Bajaprioridad.front();
+            Bajaprioridad.pop();
+        }else if (!PedidoInstantaneo.empty()){
+            PedidoActual = PedidoInstantaneo.front();
+            PedidoInstantaneo.pop();
+        }
+        return PedidoActual;
+    }
+
+    Constructor * RetornaConstructorValido(string tipoProducto){
+        //Esta funcion retorna el constructor que se va a usar
+        for (int i = 0; i < 10; i++){
+            if (ArrayConstructores[i]->tipoProducto == tipoProducto && ArrayConstructores[i]->Disponibilidad == true){
+                return ArrayConstructores[i];
+            }else if (ArrayConstructores[i]->tipoProducto == "D" && ArrayConstructores[i]->Disponibilidad == true){
+                return ArrayConstructores[i];
+            }
+        }
+        return NULL;
+    }
+
+    void ConstruirProductos(int ProductosNecesitados, NodoComplejo * ProductoBuscado){
+        string CodigoProducto = ProductoBuscado -> lista -> primerNodo -> dato;
+        ProductoBuscado->lista->primerNodo->siguiente->dato = "0";
+        Constructor * ConstructorValido = RetornaConstructorValido(ProductoBuscado->lista->primerNodo->siguiente->siguiente->dato);
+        ConstructorValido->AgregarCantidadAlProducto(ListaProductos, CodigoProducto, ProductosNecesitados);
+    }
 
     void IniciaPedido(){
         //Esta funcion inicia el pedido, si no hay pedidos en las colas, no hace nada
-        if (Altaprioridad.empty() && Bajaprioridad.empty() && PedidoInstantaneo.empty()){
+        ListaCompleja * PedidoActual = RetornaPedido();
+        if (PedidoActual == NULL){
             cout << "No hay pedidos en las colas" << endl;
-        }else if (Altaprioridad.empty() && Bajaprioridad.empty() && !PedidoInstantaneo.empty()){
-            ListaCompleja * PedidoActual;
-            NodoComplejo * tmp;
-            if (!Altaprioridad.empty()){
-                PedidoActual = Altaprioridad.front();
-                Altaprioridad.pop();
-                NodoComplejo * tmp= PedidoActual->primerNodo->siguiente->siguiente;
-            cout << "El pedido:" << PedidoActual->primerNodo->lista->primerNodo->dato << "Esta siendo procesado" << endl;
-            while (tmp != NULL){
-                string CodigoProducto = tmp -> lista -> primerNodo -> dato;
-                int cantidad = stoi(tmp -> lista -> primerNodo -> siguiente -> dato);
-                NodoComplejo * ProductoBuscado = ListaProductos->Buscar(CodigoProducto);
-                int CantidadProductoBuscado = stoi(ProductoBuscado->lista->primerNodo->siguiente->dato);
-                if (CantidadProductoBuscado - cantidad < 0){
-                    //Se llaman a los constructores TODO
-                }else if (CantidadProductoBuscado - cantidad >= 0){
-                    ProductoBuscado->lista->primerNodo->siguiente->dato = to_string(CantidadProductoBuscado - cantidad);
-                    //TODO Enviar a cola de almacen 
-                }
-                tmp = tmp -> siguiente;
-
-            }
+            return; 
         }
-    }
+        NodoComplejo * tmp= PedidoActual->primerNodo->siguiente->siguiente;
+        cout << "El pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << ". Esta siendo procesado" << endl;
+        while (tmp != NULL && tmp -> tipo != "Bitacora"){
+            string CodigoProducto = tmp -> lista -> primerNodo -> dato;
+            int CantidadNecesitada = stoi(tmp -> lista -> primerNodo -> siguiente -> dato);
+            NodoComplejo * ProductoBuscado = ListaProductos->Buscar(CodigoProducto);
+            int CantidadAlmacenada = stoi(ProductoBuscado->lista->primerNodo->siguiente->dato);
+            int Res = CantidadAlmacenada - CantidadNecesitada;
+            if (Res < 0){
+                cout << "No hay suficientes productos: " << CodigoProducto << " por lo tanto se construiran" << endl;
+                Res = CantidadNecesitada - CantidadAlmacenada;
+                ConstruirProductos(Res, ProductoBuscado);
 
-}};
+            }else if (Res >= 0){
+                cout << "Se esta procesando el producto: " << CodigoProducto << endl;
+                ProductoBuscado->lista->primerNodo->siguiente->dato = to_string(Res);
+            }
+            tmp = tmp -> siguiente;
+        }
+        cout << "El pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << ". Ha sido procesado" << endl;
+        //TODO Enviar a cola de almacen 
+    }
+};
