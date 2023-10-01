@@ -29,6 +29,7 @@ struct Constructor{
     }
 
     void AgregarCantidadAlProducto(ListaCompleja * listaDeProductos, string Codigo, int Cantidad){
+        // Solo llamar por medio de thread
         //Variables
         NodoComplejo* tmp = listaDeProductos->Buscar(Codigo);
         int tiempoDeElboracion= stoi(tmp -> lista -> primerNodo -> siguiente -> siguiente -> dato);
