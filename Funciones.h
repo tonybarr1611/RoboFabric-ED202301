@@ -1,4 +1,13 @@
 //Funciones
+string HoraSistema(){
+    // Retorna la hora y fecha del sistema
+    time_t now = time(0);
+    tm *ltm = localtime(&now);
+    string hora = to_string(ltm->tm_hour) + ":" + to_string(ltm->tm_min) + ":" + to_string(ltm->tm_sec);
+    string fecha = to_string(ltm->tm_mday) + "/" + to_string(ltm->tm_mon) + "/" + to_string(1900 + ltm->tm_year);
+    return fecha + " " + hora;
+}
+
 ListaSimple* SepararStringsPorTabs(string linea) {
     ListaSimple *lista = new ListaSimple(); // Crear una instancia de ListaSimple
     string dato = "";
@@ -88,3 +97,13 @@ ListaCompleja *LeerArchivo(NodoSimple *NodoArchivo, string tipoLista){
     lista->agregar(NodoArchivo->dato);
     return LeerArchivo(lista, tipoLista);
 }
+
+
+int RetornaPrioridad(ListaCompleja * ListaClientes, string codigo){
+    //Retorna la prioridad del Cliente con su codigo 
+    NodoComplejo * ClienteBuscado = ListaClientes->Buscar(codigo);
+    if (ClienteBuscado != NULL){
+        return stoi(ClienteBuscado->lista->ultimoNodo->dato);}
+    else{ return -1;
+    }}
+

@@ -4,6 +4,7 @@
 #include <thread>
 #include <chrono>
 #include <vector>
+#include <queue>
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -17,14 +18,18 @@ struct Cola;
 struct Producto;
 struct Constructor;
 struct Almacen;
+struct Balanceador;
 
 // Declaraciones de Funciones
+string HoraSistema();
 ListaSimple *SepararStringsPorTabs(string linea);
 ListaCompleja *SepararStringsPorLineas(string linea, string tipo);
 ListaSimple *LeerDirectorio(string, string);
 ListaCompleja *LeerArchivo(string, string, string); // Directorio, tipo de archivo, tipo de lista
 ListaCompleja *LeerArchivo(ListaSimple*, string); // Lista de archivos, tipo de lista
 ListaCompleja *LeerArchivo(NodoSimple*, string); // Nodo de archivos, tipo de lista
+int RetornaPrioridad(ListaCompleja *, string);
+
 
 // Estructuras 
 struct NodoSimple {
@@ -86,17 +91,15 @@ struct ListaSimple{
         agregar(nuevo);
     }
 
-    int Buscar(string dato){
+    NodoSimple * Buscar(string dato){
         NodoSimple * tmp = primerNodo;
-        int i = 0;
         while(tmp != NULL){
             if(tmp->dato == dato){
-                return i;
+                return tmp;
             }
             tmp = tmp -> siguiente;
-            i++;
         }
-        return -1;
+        return NULL;
     }
 
     int lenLista(){
@@ -201,8 +204,8 @@ struct ListaCompleja{
         agregar(new NodoComplejo(dato));
     }
 
-    void agregar(string dato, ListaSimple * lista){
-        agregar(new NodoComplejo(dato, lista));
+    void agregar(string tipo, ListaSimple * lista){
+        agregar(new NodoComplejo(tipo, lista));
     }
 
     void agregar(ListaCompleja * lista){
@@ -242,7 +245,7 @@ struct ListaCompleja{
         //Se puede usar para los clientes y productos al tener un unico nombre indicativo de la lista
         NodoComplejo * tmp = primerNodo;
         while(tmp != NULL){
-            if(tmp->lista->Buscar(dato)==0){
+            if(tmp->lista->Buscar(dato) != NULL){
                 return tmp;
             }
             tmp = tmp -> siguiente;
@@ -293,5 +296,7 @@ struct Cola{
 #include "Structs/Constructor.h"
 
 #include "Structs/Almacen.h"
+
+#include "Structs/Balanceador.h"
 
 #include "Funciones.h"
