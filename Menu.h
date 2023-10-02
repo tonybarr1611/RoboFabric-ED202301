@@ -36,8 +36,12 @@ void Menu(){
     bool Isrunning = true;
     while (Isrunning == true){
     
-    //Thread que lee pedidos 
-    LeerPedidosThread("Pedidos//Pendientes", Isrunning, ListaNombresPedidos);
-    ListaNombresPedidos->imprimir();
-    
-    }}
+        bool Isrunning = true;
+        std::thread LeePedidos(LeerPedidosThread, "Pedidos//Pendientes", Isrunning, ListaNombresPedidos);
+        LeePedidos.detach();
+        while (Isrunning == true){
+            ListaNombresPedidos->imprimir();
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+        }
+    }
+}
