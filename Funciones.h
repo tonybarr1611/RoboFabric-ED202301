@@ -107,3 +107,20 @@ int RetornaPrioridad(ListaCompleja * ListaClientes, string codigo){
     else{ return -1;
     }}
 
+
+void LeerPedidosThread(string Directorio, bool Isrunning, ListaSimple* ListaPedidos){
+    //thread 
+    while(Isrunning){
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        ListaSimple* tmp = LeerDirectorio(Directorio, "txt");
+        NodoSimple* tmpNodo = tmp->primerNodo;
+        while (tmpNodo != NULL){
+            //TODO ver si se puede implementar semaforo 
+            ListaPedidos->primerNodo = ListaPedidos->ultimoNodo = NULL;
+            if (ListaPedidos->Buscar(tmpNodo->dato) == NULL)
+                ListaPedidos->agregar(tmpNodo);
+            tmpNodo = tmpNodo->siguiente;
+        }
+    }
+}
+

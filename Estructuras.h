@@ -113,6 +113,17 @@ struct ListaSimple{
         }
         return i;
     }
+
+    NodoSimple* eliminar(string Dato){
+        NodoSimple * tmp = Buscar(Dato);
+        if (lenLista() == 1){
+            primerNodo == NULL;
+            ultimoNodo = NULL;
+            return tmp;
+        }
+        
+
+    }
 };
 
 struct NodoComplejo{
@@ -308,3 +319,5 @@ struct Cola{
 #include "Structs/Balanceador.h"
 
 #include "Funciones.h"
+
+#include "Menu.h"
