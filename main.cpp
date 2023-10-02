@@ -39,11 +39,29 @@ int main(int argc, char** argv) {
     }
     pedidosAlmacen->front()->imprimir();
     
+    cout << "----------------------------------------------------------------------------------" << endl;
     
+    cout << "Beta de la implementacion de la bodega" << endl;
+    queue<ListaCompleja*> * paraAlisto = new queue<ListaCompleja*>;
+    queue<ListaCompleja*> * paraFacturar = new queue<ListaCompleja*>;
+    queue<Alistador*> * Alistadores = new queue<Alistador*>;
+    for (int i = 0; i < 6; i++){
+        Alistadores->push(new Alistador(true, i, listaDeProductos, Alistadores, paraFacturar));
+    }
+    Bodega * bodega = new Bodega(listaDeProductos, paraAlisto, Alistadores);
+    bodega->InsertaProductosEnAlmacen();
+    bodega->imprimir();
+    paraAlisto->push(pedidosAlmacen->front());
+    bodega->continuarPedido();
+    while (paraFacturar->empty()) {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+    paraFacturar->front()->imprimir();
+
     cout << "----------------------------------------------------------------------------------" << endl;
 
     cout << "Beta de la implementacion de la lista de Alistadores" << endl;
-    Alistador * alistador = new Alistador(true, 1, listaDeProductos);
+    Alistador * alistador = new Alistador(true, 1, listaDeProductos, Alistadores, paraFacturar);
     alistador->imprimir();
     PedidoActual->primerNodo->siguiente->siguiente->imprimir();
     // alistador->Alistar(PedidoActual);

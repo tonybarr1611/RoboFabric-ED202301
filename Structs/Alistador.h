@@ -10,10 +10,12 @@ struct Alistador{
         id = 0;
     }
 
-    Alistador(bool _encendido, int _id, ListaCompleja * _listaProductos){
+    Alistador(bool _encendido, int _id, ListaCompleja * _listaProductos, queue<Alistador*> * _Alistadores, queue<ListaCompleja*> * _Alistados){
         encendido = _encendido;
         id = _id;
         listaProductos = _listaProductos;
+        Alistadores = _Alistadores;
+        Alistados = _Alistados;
     }
 
     void imprimir(){

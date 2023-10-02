@@ -90,19 +90,19 @@ struct Balanceador {
         string CodigoProducto = ProductoBuscado -> lista -> primerNodo -> dato;
         ProductoBuscado->lista->primerNodo->siguiente->dato = "0";
         Constructor * ConstructorValido = RetornaConstructorValido(ProductoBuscado->lista->primerNodo->siguiente->siguiente->dato);
-        // TODO llamar por medio de thread
+        while (ConstructorValido == NULL){
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            ConstructorValido = RetornaConstructorValido(ProductoBuscado->lista->primerNodo->siguiente->siguiente->dato);
+        }
         ConstructorValido->Disponibilidad = false;
         std::thread hilo(&Constructor::AgregarCantidadAlProducto, ConstructorValido, CodigoProducto, ProductosNecesitados);
-        // ConstructorValido->AgregarCantidadAlProducto(CodigoProducto, ProductosNecesitados);
         hilo.detach();
-        ConstructorValido->imprimir();
         return ConstructorValido;
     }
 
     void validarFinalPedido(queue<Constructor*> * ConstructoresUsados, ListaCompleja * PedidoActual){
         //Esta funcion valida si el pedido se completo, si no se completo, sigue loopeando hasta que lo este
         // Solo llamar por medio de thread
-        cout << "ESTADO COLA:  " << ConstructoresUsados->size() << endl;
         while (!ConstructoresUsados->empty()){
             if (ConstructoresUsados->front()->Disponibilidad == true){
                 ConstructoresUsados->pop();
@@ -121,7 +121,6 @@ struct Balanceador {
             cout << "No hay suficientes productos: " << CodigoProducto << " por lo tanto se construiran" << endl;
             cantidad = -cantidad;
             ConstructoresUsados->push(ConstruirProductos(cantidad, ProductoBuscado));
-            ConstructoresUsados->front()->imprimir();
         }else if (cantidad >= 0){
             cout << "Se esta procesando el producto: " << CodigoProducto << endl;
             ProductoBuscado->lista->primerNodo->siguiente->dato = to_string(cantidad);
@@ -148,7 +147,6 @@ struct Balanceador {
             VerificaProductos(Res, ConstructoresUsados, CodigoProducto);
             tmp = tmp -> siguiente;
         }
-        // TODO llamar por medio de thread
         std::thread hilo(&Balanceador::validarFinalPedido, this, ConstructoresUsados, PedidoActual);
         hilo.detach();
     }

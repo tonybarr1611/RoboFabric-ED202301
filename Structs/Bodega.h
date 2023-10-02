@@ -77,9 +77,9 @@ struct Bodega {
             paraAlisto->pop();
             Alistador * alistador = Alistadores->front();
             Alistadores->pop();
-            // // Revisar hilo
-            // std::thread hilo(&Alistador::Alistar, alistador, pedido);
-            // hilo.detach();
+            // Revisar hilo
+            std::thread hilo(&Alistador::Alistar, alistador, pedido);
+            hilo.detach();
         }else{
             return;
         }
