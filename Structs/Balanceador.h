@@ -148,7 +148,6 @@ struct Balanceador {
             VerificaProductos(Res, ConstructoresUsados, CodigoProducto);
             tmp = tmp -> siguiente;
         }
-        // TODO llamar por medio de thread
         std::thread hilo(&Balanceador::validarFinalPedido, this, ConstructoresUsados, PedidoActual);
         hilo.detach();
     }

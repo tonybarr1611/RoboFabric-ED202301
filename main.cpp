@@ -55,5 +55,13 @@ int main(int argc, char** argv) {
     Empacador * empacador = new Empacador(true, PorFacturar);
     
     empacador->Empacar(PedidoActual);
+    cout << "-------------------------------------------------------------------------------------" << endl; 
+    bool Isrunning = true;
+    std::thread LeePedidos(LeerPedidosThread, "Pedidos//Pendientes", Isrunning, ListaNombresDePedidos);
+    LeePedidos.detach();
+    while (Isrunning == true){
+        ListaNombresDePedidos->imprimir();
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+    } 
     return 0;
 }

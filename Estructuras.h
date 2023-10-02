@@ -308,3 +308,5 @@ struct Cola{
 #include "Structs/Balanceador.h"
 
 #include "Funciones.h"
+
+#include "Menu.h"
