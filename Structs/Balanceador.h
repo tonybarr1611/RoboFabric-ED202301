@@ -61,11 +61,12 @@ struct Balanceador {
             MoverArchivotxt("Pedidos/Pendientes/" + Listapedidos->primerNodo->dato, "Pedidos/Procesados");
             return LeerArchivo(Listapedidos->primerNodo, "Pedido");
 
-        }else{ std::string path = "Pedidos/Pendientes/" + Listapedidos->primerNodo->dato;
-        MoverArchivotxt(path, "Pedidos/Errores");
+        }else{MoverArchivotxt("Pedidos/Pendientes/" + Listapedidos->primerNodo->dato, "Pedidos/Errores");
+            
         }
-
+        return NULL;
     }
+
     void MetePedidoEncola(ListaSimple * ListaPedidos, ListaCompleja * ListaClientes){
         //Esta Funcion Unicamente Comprueba un pedidos en ListaPedidos en caso da dar error los mueves al archivo de error
         //Variables 

@@ -33,6 +33,7 @@ void Menu(){
     //TODO Threads de la parte de Tony
     
     cout << "test" << endl;
+    ListaNombresPedidos = LeerDirectorio("Pedidos//Pendientes", "txt");
     balanceador->ValidaArchivo(ListaNombresPedidos);
     
     bool Isrunning = true;
