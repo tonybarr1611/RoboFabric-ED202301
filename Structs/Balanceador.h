@@ -5,6 +5,7 @@ struct Balanceador {
     queue<ListaCompleja*> PedidoInstantaneo;
     queue<ListaCompleja*> * pedidosAlmacen;
     ListaCompleja * ListaProductos;
+    ListaCompleja * ListaClientes;
     int Estado; // 0 = Apagado, 1 = Encendido, 2 = En proceso
 
     //constructor 
@@ -18,27 +19,61 @@ struct Balanceador {
         while (!Altaprioridad.empty()) Altaprioridad.pop();
         while (!Bajaprioridad.empty()) Bajaprioridad.pop();
         while (!PedidoInstantaneo.empty()) PedidoInstantaneo.pop();
+        ListaCompleja * ListaProductos = new ListaCompleja();
+        ListaCompleja * ListaClientes = new ListaCompleja();
     }
 
-    Balanceador(int Estado, ListaCompleja * ListaProductos, queue<ListaCompleja*> Altaprioridad, queue<ListaCompleja*> Bajaprioridad, queue<ListaCompleja*> PedidoInstantaneo, queue<ListaCompleja*> * pedidosAlmacen) {
+    Balanceador(int Estado, ListaCompleja * ListaProductos, queue<ListaCompleja*> Altaprioridad, queue<ListaCompleja*> Bajaprioridad, queue<ListaCompleja*> PedidoInstantaneo, queue<ListaCompleja*> * pedidosAlmacen, ListaCompleja * ListaClientes) {
         this->Altaprioridad = Altaprioridad;
         this->Bajaprioridad = Bajaprioridad;
         this->PedidoInstantaneo = PedidoInstantaneo;
         this->ListaProductos = ListaProductos; 
         this->Estado = Estado;
         this->pedidosAlmacen = pedidosAlmacen;
+        this->ListaClientes = ListaClientes;
         for (int i = 0; i < 10; i++) {
             ArrayConstructores[i] = new Constructor("Constructor " + to_string(i), 1, true, "D", ListaProductos);
         }
     }
 
     //Metodos
+    string EncuentraErrorPedido(NodoSimple * Directorio){
+        //Esta funcion encuentra el error en el pedido y lo retorna en un tipo string 
+        ListaCompleja * PedidoActual= LeerArchivo( Directorio, "Pedido");
+        NodoComplejo * tmp = PedidoActual->primerNodo->siguiente->siguiente;
+        while (tmp != NULL){
+            if (ListaProductos->Buscar(tmp->lista->primerNodo->dato) == NULL)
+                return "El producto: " + tmp->lista->primerNodo->dato + " no existe";
+        tmp = tmp->siguiente;
+        }
+        if (ListaClientes->Buscar(PedidoActual->primerNodo->siguiente->lista->primerNodo->dato) == NULL ){
+            return "El cliente no existe";
+        }else if (PedidoActual->primerNodo->siguiente->siguiente == NULL){
+            return "No hay productos en el pedido";
+        }
+        return "true";
+    }
+    
+    ListaCompleja * ValidaArchivo(ListaSimple * Listapedidos ){
+        //Esta funcion valida el archivo, si no hay error retorna el pedido y lo mueve a procesados, si hay error lo mueve a la carpeta de error
+        string definer = EncuentraErrorPedido(Listapedidos->primerNodo);
+        if (definer == "true"){
+            MoverArchivotxt("Pedidos/Pendientes/" + Listapedidos->primerNodo->dato, "Pedidos/Procesados");
+            return LeerArchivo(Listapedidos->primerNodo, "Pedido");
+
+        }else{ std::string path = "Pedidos/Pendientes/" + Listapedidos->primerNodo->dato;
+        MoverArchivotxt(path, "Pedidos/Errores");
+        }
+
+    }
     void MetePedidoEncola(ListaSimple * ListaPedidos, ListaCompleja * ListaClientes){
         //Esta Funcion Unicamente Comprueba un pedidos en ListaPedidos en caso da dar error los mueves al archivo de error
-        ListaCompleja * PedidoActual= LeerArchivo(ListaPedidos->primerNodo , "Pedido");
+        //Variables 
+        ListaCompleja * PedidoActual = ValidaArchivo(ListaPedidos);
         ListaSimple * Bitacora = new ListaSimple();
         int Prioridad = RetornaPrioridad(ListaClientes, PedidoActual->primerNodo->siguiente->lista->primerNodo->dato);
 
+        //Funcionamiento
         cout << "Se esta procesando el pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << endl;
         Bitacora->agregar("Pedido:\t\t" + PedidoActual->primerNodo->lista->primerNodo->dato);
         Bitacora->agregar("Cliente:\t\t" + PedidoActual->primerNodo->siguiente->lista->primerNodo->dato);
@@ -58,6 +93,7 @@ struct Balanceador {
         // TODO Codigo que mueve archivos a error, no es un pedido
         cout << "Se metio el pedido a la cola" << endl;
     }
+
     ListaCompleja * RetornaPedido(){
         //Esta funcion retorna el pedido que se va a procesar
         ListaCompleja * PedidoActual = NULL;

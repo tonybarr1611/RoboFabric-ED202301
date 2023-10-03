@@ -21,7 +21,7 @@ void Menu(){
     queue<ListaCompleja*> * pedidosAlmacen = new queue<ListaCompleja*>;
 
     //Cuando se crea el balanceador este tiene todos sus constructores con categoria D 
-    Balanceador * balanceador = new Balanceador(1, listaDeProductos, Altaprioridad, Bajaprioridad, PedidoInstantaneo, pedidosAlmacen);
+    Balanceador * balanceador = new Balanceador(1, listaDeProductos, Altaprioridad, Bajaprioridad, PedidoInstantaneo, pedidosAlmacen, ListaClientes);
 
 
 // Funcionamiento del programa
@@ -33,7 +33,7 @@ void Menu(){
     //TODO Threads de la parte de Tony
     
     cout << "test" << endl;
-    MoverArchivotxt("Pedidos/Pendientes/pedido1", "Pedidos/Completados");
+    balanceador->ValidaArchivo(ListaNombresPedidos);
     
     bool Isrunning = true;
     while (Isrunning == true){
