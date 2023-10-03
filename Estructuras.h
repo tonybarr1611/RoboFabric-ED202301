@@ -31,7 +31,9 @@ ListaCompleja *LeerArchivo(string, string, string); // Directorio, tipo de archi
 ListaCompleja *LeerArchivo(ListaSimple*, string); // Lista de archivos, tipo de lista
 ListaCompleja *LeerArchivo(NodoSimple*, string); // Nodo de archivos, tipo de lista
 int RetornaPrioridad(ListaCompleja *, string);
+string nombreArchivo(string);
 bool MoverArchivotxt(string, string);
+
 // Estructuras 
 struct NodoSimple {
     // NodoSimple es un nodo de ListaSimple

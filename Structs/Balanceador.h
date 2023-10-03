@@ -57,12 +57,13 @@ struct Balanceador {
     ListaCompleja * ValidaArchivo(ListaSimple * Listapedidos ){
         //Esta funcion valida el archivo, si no hay error retorna el pedido y lo mueve a procesados, si hay error lo mueve a la carpeta de error
         string definer = EncuentraErrorPedido(Listapedidos->primerNodo);
+        cout << nombreArchivo(Listapedidos->primerNodo->dato) << endl;
         if (definer == "true"){
-            MoverArchivotxt("Pedidos/Pendientes/" + Listapedidos->primerNodo->dato, "Pedidos/Procesados");
+            MoverArchivotxt("Pedidos/Pendientes/" + nombreArchivo(Listapedidos->primerNodo->dato), "Pedidos/Procesados");
             return LeerArchivo(Listapedidos->primerNodo, "Pedido");
 
-        }else{MoverArchivotxt("Pedidos/Pendientes/" + Listapedidos->primerNodo->dato, "Pedidos/Errores");
-            
+        }else{MoverArchivotxt("Pedidos/Pendientes/" + nombreArchivo(Listapedidos->primerNodo->dato), "Pedidos/Errores");
+
         }
         return NULL;
     }

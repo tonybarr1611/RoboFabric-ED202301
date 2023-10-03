@@ -108,14 +108,21 @@ int RetornaPrioridad(ListaCompleja * ListaClientes, string codigo){
     }
 }
 
+string nombreArchivo(string directorio){
+    while (directorio.find("/") != string::npos && directorio.find("") != directorio.length() - 1)
+        directorio = directorio.substr(directorio.find("/") + 1, directorio.length());
+    if (directorio.find("Pendientes") != string::npos)
+        directorio = directorio.substr(directorio.find("Pendientes") + 11, directorio.length());
+    return directorio;
+}
+
 bool MoverArchivotxt(string Directorio, string Destino){
     //Mueve un archivo de un directorio a otro
     // MoverArchivotxt("Pedidos/Pendientes/pedido1", "Pedidos/Completados");
     string filename = Directorio;
-    for (int i = 0; i < 2; i++)
-        filename = filename.substr(filename.find("/") + 1, filename.length());
-    string path = Directorio + ".txt";
-    string pathDestino = Destino + "/" + filename +".txt";;
+    filename = nombreArchivo(filename);
+    string path = Directorio;
+    string pathDestino = Destino + "/" + filename;;
     if (fs::exists(path)){
         fs::rename(path, pathDestino);
         return true;
