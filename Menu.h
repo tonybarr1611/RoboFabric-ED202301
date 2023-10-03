@@ -31,7 +31,9 @@ void Menu(){
     //std::thread MetePedidoEncola(Funcion); // Funcionamiento con un segundo de delay en comparacion a leer pedidos mete de uno a uno los pedidos en colas
     //std::thread IniciarPedido(Funcion); //El balanceador se pone la gorra cada segundo 
     //TODO Threads de la parte de Tony
-
+    
+    cout << "test" << endl;
+    MoverArchivotxt("Pedidos/Pendientes/pedido1", "Pedidos/Completados");
     
     bool Isrunning = true;
     while (Isrunning == true){

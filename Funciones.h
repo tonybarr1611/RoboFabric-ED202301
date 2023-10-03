@@ -105,7 +105,25 @@ int RetornaPrioridad(ListaCompleja * ListaClientes, string codigo){
     if (ClienteBuscado != NULL){
         return stoi(ClienteBuscado->lista->ultimoNodo->dato);}
     else{ return -1;
-    }}
+    }
+}
+
+bool MoverArchivotxt(string Directorio, string Destino){
+    //Mueve un archivo de un directorio a otro
+    // MoverArchivotxt("Pedidos/Pendientes/pedido1", "Pedidos/Completados");
+    string filename = Directorio;
+    for (int i = 0; i < 2; i++)
+        filename = filename.substr(filename.find("/") + 1, filename.length());
+    string path = Directorio + ".txt";
+    string pathDestino = Destino + "/" + filename +".txt";;
+    if (fs::exists(path)){
+        fs::rename(path, pathDestino);
+        return true;
+    }
+    else
+        return false;
+    
+}
 
 
 void LeerPedidosThread(string Directorio, bool Isrunning, ListaSimple* ListaPedidos){
