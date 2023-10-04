@@ -118,7 +118,7 @@ string nombreArchivo(string directorio){
 
 bool MoverArchivotxt(string Directorio, string Destino){
     //Mueve un archivo de un directorio a otro
-    // MoverArchivotxt("Pedidos/Pendientes/pedido1", "Pedidos/Completados");
+    // MoverArchivotxt("Pedidos/Pendientes/pedido1.txt", "Pedidos/Completados");
     string filename = Directorio;
     filename = nombreArchivo(filename);
     string path = Directorio;
@@ -130,7 +130,16 @@ bool MoverArchivotxt(string Directorio, string Destino){
     else
         return false;
 }
-
+void EscribirArchivo(string Archivo, string texto){
+    //Escribe en un archivo
+    //EscribirArchivo("Pedidos/Completados/pedido1.txt", "Pedido Completado");
+std::ofstream archivo(Archivo, std::ios::app);
+        if (!archivo.is_open()) {
+        std::cerr << "No se pudo abrir el archivo." << std::endl;
+    }
+        archivo << endl << texto;
+        archivo.close();
+}
 
 void LeerPedidosThread(string Directorio, bool Isrunning, ListaSimple* ListaPedidos){
     //thread 

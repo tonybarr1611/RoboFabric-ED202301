@@ -39,17 +39,17 @@ struct Balanceador {
     //Metodos
     string EncuentraErrorPedido(NodoSimple * Directorio){
         //Esta funcion encuentra el error en el pedido y lo retorna en un tipo string 
-        ListaCompleja * PedidoActual= LeerArchivo( Directorio, "Pedido");
+        ListaCompleja * PedidoActual = LeerArchivo(Directorio, "Pedido");
+        if (ListaClientes->Buscar(PedidoActual->primerNodo->siguiente->lista->primerNodo->dato) == NULL ){
+            return "Error: El cliente no existe";
+        }else if (PedidoActual->primerNodo->siguiente->siguiente == NULL){
+            return "Error: No hay productos en el pedido";
+        }
         NodoComplejo * tmp = PedidoActual->primerNodo->siguiente->siguiente;
         while (tmp != NULL){
             if (ListaProductos->Buscar(tmp->lista->primerNodo->dato) == NULL)
-                return "El producto: " + tmp->lista->primerNodo->dato + " no existe";
+                return "Error: El producto: " + tmp->lista->primerNodo->dato + " no existe";
         tmp = tmp->siguiente;
-        }
-        if (ListaClientes->Buscar(PedidoActual->primerNodo->siguiente->lista->primerNodo->dato) == NULL ){
-            return "El cliente no existe";
-        }else if (PedidoActual->primerNodo->siguiente->siguiente == NULL){
-            return "No hay productos en el pedido";
         }
         return "true";
     }
@@ -61,17 +61,22 @@ struct Balanceador {
         if (definer == "true"){
             MoverArchivotxt("Pedidos/Pendientes/" + nombreArchivo(Listapedidos->primerNodo->dato), "Pedidos/Procesados");
             return LeerArchivo(Listapedidos->primerNodo, "Pedido");
-
-        }else{MoverArchivotxt("Pedidos/Pendientes/" + nombreArchivo(Listapedidos->primerNodo->dato), "Pedidos/Errores");
-
+        }else{
+        string Archivo = "Pedidos//Pendientes//" + nombreArchivo(Listapedidos->primerNodo->dato);
+        EscribirArchivo(Archivo, definer);
+        MoverArchivotxt("Pedidos/Pendientes/" + nombreArchivo(Listapedidos->primerNodo->dato), "Pedidos/Errores");
         }
         return NULL;
     }
 
     void MetePedidoEncola(ListaSimple * ListaPedidos, ListaCompleja * ListaClientes){
         //Esta Funcion Unicamente Comprueba un pedidos en ListaPedidos en caso da dar error los mueves al archivo de error
-        //Variables 
+        //Valida el archivo
         ListaCompleja * PedidoActual = ValidaArchivo(ListaPedidos);
+        if (ValidaArchivo(ListaPedidos)== NULL)
+            return;
+             
+        //Variables
         ListaSimple * Bitacora = new ListaSimple();
         int Prioridad = RetornaPrioridad(ListaClientes, PedidoActual->primerNodo->siguiente->lista->primerNodo->dato);
 
