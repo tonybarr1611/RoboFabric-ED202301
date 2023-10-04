@@ -58,4 +58,11 @@ struct Almacen{
             return;
         }
     }
+
+    void continuarPedidoThread(bool * isRunning){
+        while (*isRunning){
+            continuarPedido();
+            std::this_thread::sleep_for(std::chrono::seconds(4));
+        }
+    }
 };

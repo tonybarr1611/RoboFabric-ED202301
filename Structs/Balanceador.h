@@ -62,6 +62,7 @@ struct Balanceador {
         cout << nombreArchivo(Listapedidos->primerNodo->dato) << endl;
         if (definer == "true"){
             MoverArchivotxt("Pedidos/Pendientes/" + nombreArchivo(Listapedidos->primerNodo->dato), "Pedidos/Procesados");
+            ListaPedidos->primerNodo->dato = "Pedidos/Procesados/" + nombreArchivo(Listapedidos->primerNodo->dato);
             return LeerArchivo(Listapedidos->primerNodo, "Pedido");
         }else{
             string Archivo = "Pedidos//Pendientes//" + nombreArchivo(Listapedidos->primerNodo->dato);

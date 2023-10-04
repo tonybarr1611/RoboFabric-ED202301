@@ -44,6 +44,9 @@ void Menu(){
     std::thread IniciarPedido(&Balanceador::IniciaPedidoThread, balanceador, std::ref(isRunning));
     IniciarPedido.detach();
 
+    std::thread SeguirPedido(&Almacen::continuarPedidoThread, almacen, std::ref(isRunning));
+    SeguirPedido.detach();
+
     std::thread EncolarPedidos(&Balanceador::MetePedidoEncolaThread, balanceador, std::ref(isRunning));
     EncolarPedidos.detach();
 
