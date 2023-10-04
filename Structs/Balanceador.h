@@ -69,14 +69,15 @@ struct Balanceador {
         return NULL;
     }
 
-    void MetePedidoEncola(ListaSimple * ListaPedidos, ListaCompleja * ListaClientes){
+    void MetePedidoEncola(ListaSimple * ListaPedidos){
         //Esta Funcion Unicamente Comprueba un pedidos en ListaPedidos en caso da dar error los mueves al archivo de error
         //Valida el archivo
         ListaCompleja * PedidoActual = ValidaArchivo(ListaPedidos);
-        if (ValidaArchivo(ListaPedidos)== NULL)
+        if (PedidoActual == NULL)
             return;
-             
+        
         //Variables
+        PedidoActual->imprimir();
         ListaSimple * Bitacora = new ListaSimple();
         int Prioridad = RetornaPrioridad(ListaClientes, PedidoActual->primerNodo->siguiente->lista->primerNodo->dato);
 

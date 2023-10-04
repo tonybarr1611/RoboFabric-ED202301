@@ -34,17 +34,23 @@ void Menu(){
     
     cout << "test" << endl;
     ListaNombresPedidos = LeerDirectorio("Pedidos//Pendientes", "txt");
-    balanceador->ValidaArchivo(ListaNombresPedidos);
+    
+    balanceador->MetePedidoEncola(ListaNombresPedidos);
+    PedidoInstantaneo.front()->imprimir();
+    NodoSimple * tmp = ListaNombresPedidos->primerNodo;
+    ListaNombresPedidos->primerNodo = tmp->siguiente;
+    balanceador->MetePedidoEncola(ListaNombresPedidos);
+    Bajaprioridad.front()->imprimir();
     
     bool Isrunning = true;
-    while (Isrunning == true){
+    // while (Isrunning == true){
     
-        bool Isrunning = true;
-        std::thread LeePedidos(LeerPedidosThread, "Pedidos//Pendientes", Isrunning, ListaNombresPedidos);
-        LeePedidos.detach();
-        while (Isrunning == true){
-            ListaNombresPedidos->imprimir();
-            std::this_thread::sleep_for(std::chrono::seconds(5));
-        }
-    }
+    //     bool Isrunning = true;
+    //     std::thread LeePedidos(LeerPedidosThread, "Pedidos//Pendientes", Isrunning, ListaNombresPedidos);
+    //     LeePedidos.detach();
+    //     while (Isrunning == true){
+    //         ListaNombresPedidos->imprimir();
+    //         std::this_thread::sleep_for(std::chrono::seconds(5));
+    //     }
+    // }
 }
