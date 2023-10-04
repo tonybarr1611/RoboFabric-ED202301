@@ -141,9 +141,9 @@ std::ofstream archivo(Archivo, std::ios::app);
         archivo.close();
 }
 
-void LeerPedidosThread(string Directorio, bool Isrunning, ListaSimple* ListaPedidos){
+void LeerPedidosThread(string Directorio, bool * Isrunning, ListaSimple* ListaPedidos){
     //thread 
-    while(Isrunning){
+    while(*Isrunning){
         std::this_thread::sleep_for(std::chrono::seconds(5));
         ListaSimple* tmp = LeerDirectorio(Directorio, "txt");
         NodoSimple* tmpNodo = tmp->primerNodo;

@@ -2,6 +2,7 @@ struct Empacador{
     bool encendido;
     queue<ListaCompleja*> PorEmpacar;
     queue<ListaCompleja*> * PorFacturar;
+    ListaCompleja * PedidoActual;
 
     Empacador(){
         encendido = true;
@@ -25,15 +26,15 @@ struct Empacador{
         encendido = true;
     }
 
-    void Empacar(ListaCompleja * pedido){
+    void Empacar(){
         // Solo llamar por medio de un hilo
-        NodoComplejo * tmp = pedido->primerNodo->siguiente->siguiente;
+        NodoComplejo * tmp = PedidoActual->primerNodo->siguiente->siguiente;
         while (tmp != NULL && tmp->tipo != "Bitacora"){
             cout << "Empacando " << tmp->lista->primerNodo->dato << endl;
             std::this_thread::sleep_for(std::chrono::seconds(1));
             tmp = tmp->siguiente;
         }
-        PorFacturar->push(pedido);
+        PorFacturar->push(PedidoActual);
     }
 
     void continuarPedido(){
@@ -41,10 +42,18 @@ struct Empacador{
         if (!PorEmpacar.empty()){
             ListaCompleja * pedido = PorEmpacar.front();
             PorEmpacar.pop();
-            // std::thread hilo(&Empacador::Empacar, pedido);
-            // hilo.detach();
+            PedidoActual = pedido;
+            std::thread hilo(Empacador::Empacar, this);
+            hilo.detach();
         }else{
             return;
+        }
+    }
+
+    void EmpacarPedidosThread(bool * isRunning){
+        while (isRunning){
+            continuarPedido();
+            std::this_thread::sleep_for(std::chrono::seconds(4));
         }
     }
 };

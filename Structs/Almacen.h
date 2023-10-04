@@ -9,10 +9,10 @@ struct Almacen{
         while (!paraAlisto->empty()) paraAlisto->pop();
     }
 
-    Almacen(ListaCompleja* _listaDeProductos){
+    Almacen(ListaCompleja* _listaDeProductos, queue<ListaCompleja*> * _paraAlisto){
         listaDeProductos = _listaDeProductos;
-        while (!pedidos.empty()) pedidos.pop();
-        while (!paraAlisto->empty()) paraAlisto->pop();
+        // while (!pedidos.empty()) pedidos.pop();
+        // while (!paraAlisto->empty()) paraAlisto->pop();
     }
 
     void imprimir(){

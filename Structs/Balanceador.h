@@ -6,6 +6,7 @@ struct Balanceador {
     queue<ListaCompleja*> * pedidosAlmacen;
     ListaCompleja * ListaProductos;
     ListaCompleja * ListaClientes;
+    ListaSimple * ListaPedidos;
     int Estado; // 0 = Apagado, 1 = Encendido, 2 = En proceso
 
     //constructor 
@@ -23,7 +24,7 @@ struct Balanceador {
         ListaCompleja * ListaClientes = new ListaCompleja();
     }
 
-    Balanceador(int Estado, ListaCompleja * ListaProductos, queue<ListaCompleja*> Altaprioridad, queue<ListaCompleja*> Bajaprioridad, queue<ListaCompleja*> PedidoInstantaneo, queue<ListaCompleja*> * pedidosAlmacen, ListaCompleja * ListaClientes) {
+    Balanceador(int Estado, ListaCompleja * ListaProductos, queue<ListaCompleja*> Altaprioridad, queue<ListaCompleja*> Bajaprioridad, queue<ListaCompleja*> PedidoInstantaneo, queue<ListaCompleja*> * pedidosAlmacen, ListaCompleja * ListaClientes, ListaSimple * ListaPedidos) {
         this->Altaprioridad = Altaprioridad;
         this->Bajaprioridad = Bajaprioridad;
         this->PedidoInstantaneo = PedidoInstantaneo;
@@ -31,6 +32,7 @@ struct Balanceador {
         this->Estado = Estado;
         this->pedidosAlmacen = pedidosAlmacen;
         this->ListaClientes = ListaClientes;
+        this->ListaPedidos = ListaPedidos;
         for (int i = 0; i < 10; i++) {
             ArrayConstructores[i] = new Constructor("Constructor " + to_string(i), 1, true, "D", ListaProductos);
         }
@@ -62,14 +64,14 @@ struct Balanceador {
             MoverArchivotxt("Pedidos/Pendientes/" + nombreArchivo(Listapedidos->primerNodo->dato), "Pedidos/Procesados");
             return LeerArchivo(Listapedidos->primerNodo, "Pedido");
         }else{
-        string Archivo = "Pedidos//Pendientes//" + nombreArchivo(Listapedidos->primerNodo->dato);
-        EscribirArchivo(Archivo, definer);
-        MoverArchivotxt("Pedidos/Pendientes/" + nombreArchivo(Listapedidos->primerNodo->dato), "Pedidos/Errores");
+            string Archivo = "Pedidos//Pendientes//" + nombreArchivo(Listapedidos->primerNodo->dato);
+            EscribirArchivo(Archivo, definer);
+            MoverArchivotxt("Pedidos/Pendientes/" + nombreArchivo(Listapedidos->primerNodo->dato), "Pedidos/Errores");
         }
         return NULL;
     }
 
-    void MetePedidoEncola(ListaSimple * ListaPedidos){
+    void MetePedidoEncola(){
         //Esta Funcion Unicamente Comprueba un pedidos en ListaPedidos en caso da dar error los mueves al archivo de error
         //Valida el archivo
         ListaCompleja * PedidoActual = ValidaArchivo(ListaPedidos);
@@ -100,6 +102,13 @@ struct Balanceador {
         }else if (PedidoActual->primerNodo->siguiente->siguiente == NULL)
         // TODO Codigo que mueve archivos a error, no es un pedido
         cout << "Se metio el pedido a la cola" << endl;
+    }
+
+    void MetePedidoEncolaThread(bool * isRunning){
+        while (* isRunning){
+            MetePedidoEncola();
+            std::this_thread::sleep_for(std::chrono::seconds(4));
+        }
     }
 
     ListaCompleja * RetornaPedido(){
@@ -137,7 +146,6 @@ struct Balanceador {
         // TODO llamar por medio de thread
         ConstructorValido->Disponibilidad = false;
         std::thread hilo(&Constructor::AgregarCantidadAlProducto, ConstructorValido, CodigoProducto, ProductosNecesitados);
-        // ConstructorValido->AgregarCantidadAlProducto(CodigoProducto, ProductosNecesitados);
         hilo.detach();
         ConstructorValido->imprimir();
         return ConstructorValido;
@@ -194,5 +202,12 @@ struct Balanceador {
         }
         std::thread hilo(&Balanceador::validarFinalPedido, this, ConstructoresUsados, PedidoActual);
         hilo.detach();
+    }
+
+    void IniciaPedidoThread(bool * isRunning){
+        while (* isRunning){
+            IniciaPedido();
+            std::this_thread::sleep_for(std::chrono::seconds(4));
+        }
     }
 };
