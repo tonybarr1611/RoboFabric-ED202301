@@ -115,12 +115,13 @@ struct ListaSimple{
         return i;
     }
 
-    NodoSimple* eliminarinicio(){
-        //Elimina el primer nodo de la lista y lo retorna
-        NodoSimple * tmp = primerNodo;
-        primerNodo = tmp -> siguiente;
-        tmp->siguiente = NULL;
-        return tmp;
+    NodoSimple* eliminar(string Dato){
+        NodoSimple * tmp = Buscar(Dato);
+        if (lenLista() == 1){
+            primerNodo == NULL;
+            ultimoNodo = NULL;
+            return tmp;
+        }
         
 
     }
@@ -226,12 +227,6 @@ struct ListaCompleja{
             agregar(lista->primerNodo);
             lista->primerNodo = lista->primerNodo->siguiente;
         }
-    }
-
-    void agregar(string tipo, string dato){
-        ListaSimple * lista = new ListaSimple();
-        lista -> agregar(dato);
-        agregar(new NodoComplejo(tipo, lista));
     }
 
 

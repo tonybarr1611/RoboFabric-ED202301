@@ -4,7 +4,7 @@ struct Constructor{
     int Estado; //Apagado = 0, Encendido = 1, En proceso = 2
     bool Disponibilidad; // Disponibilidad del constructor
     string tipoProducto; // D Seria que esta disponible para todos los productos
-    string Accion = ""; // Accion que esta realizando el constructor
+
     //constructor
     Constructor(){
         Nombre = "";

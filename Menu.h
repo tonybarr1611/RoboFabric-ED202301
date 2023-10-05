@@ -1,16 +1,20 @@
 void Menu(){
     bool temp = true;
     bool * isRunning = &temp;
-
 // Implementacion de la lista de Productos 
+    //TODO Implementar la opcion de agregar Productos desde interfaz
+    //TODO Implementar validaciones a los productos si un archivo tiene cantidad menor que cero, o una categoría diferente que A,B,C; o bien artículos repetidos, no se podrá iniciar
+    //la simulación y debe mostrar el error al usuario.
     ListaCompleja * listaDeProductos = LeerArchivo("Productos", "txt", "Producto");
 
 // Implementacion de la lista de clientes
+    //TODO Implementar la opcion de agregar clientes desde interfaz
     ListaSimple *ListaClientesArchivo = LeerDirectorio("Clientes", "txt");
     NodoSimple *nodo = ListaClientesArchivo->primerNodo;
     ListaCompleja *ListaClientes = LeerArchivo(nodo, "Cliente");
 
 // Implementacion balanceador y creacion de la lista de pedidos
+   //TODO Implementar la funcion que modifica constructores en el menu
     ListaSimple *ListaNombresPedidos = LeerDirectorio("Pedidos//Pendientes", "txt"); // Por medio de esta lista simple podemos mandar los pedidos a balanceador
     //Colas del balanceador
     queue<ListaCompleja*> Altaprioridad;
@@ -22,7 +26,7 @@ void Menu(){
     queue<ListaCompleja*> * Alistados = new queue<ListaCompleja*>;
     queue<ListaCompleja*> * Empacados = new queue<ListaCompleja*>;
 
-    //Cuando se crea el balanceador tiene todos sus constructores con categoria D 
+    //Cuando se crea el balanceador este tiene todos sus constructores con categoria D 
     Almacen * almacen = new Almacen(listaDeProductos, paraAlisto);
     pedidosAlmacen = &(almacen->pedidos);
     Balanceador * balanceador = new Balanceador(1, listaDeProductos, Altaprioridad, Bajaprioridad, PedidoInstantaneo, pedidosAlmacen, ListaClientes, ListaNombresPedidos);
@@ -34,8 +38,8 @@ void Menu(){
         Alistadores->push(alistador);
     }
 
-    //std::thread LeePedidos(LeerPedidosThread, "Pedidos/Pendientes", std::ref(isRunning), std::ref(ListaNombresPedidos));
-    //LeePedidos.detach();
+    std::thread LeePedidos(LeerPedidosThread, "Pedidos/Pendientes", std::ref(isRunning), std::ref(ListaNombresPedidos));
+    LeePedidos.detach();
 
     std::thread IniciarPedido(&Balanceador::IniciaPedidoThread, balanceador, std::ref(isRunning));
     IniciarPedido.detach();
@@ -52,70 +56,37 @@ void Menu(){
     std::thread EmpacarPedido(&Empacador::EmpacarPedidosThread, empacador, std::ref(isRunning));
     EmpacarPedido.detach();
 
-    cout << "           Bienvenido a la fabrica" << endl;
-    cout << "Desde aqui podra modificar el funcionamiento de la fabrica" << endl;
-    cout << "1. Pedido Directo" << endl;
-    cout << "2. Modificar constructores " << endl; 
-    cout << "3. Apagar elemento de la fabrica" << endl;
-    cout << "4. Apagar fabrica " << endl;
-    string opcion;
-    while (opcion != "4"){
-        cout << "Ingrese la opcion que desea realizar: ";
-        cin >> opcion;
-        if (opcion == "1"){
-            cout << "Ingrese el codigo del producto: ";
-            string codigoProducto;
-            cin >> codigoProducto;
-            cout << "Ingrese la cantidad del primer producto: ";
-            string cantidadProducto;
-            cin >> cantidadProducto;
-            ListaCompleja * pedido = new ListaCompleja();
-            pedido->agregar("Producto", "Pedido Directo");
-            pedido->agregar("Producto", "Terminal");
-            pedido->agregar("Producto", codigoProducto + "\t" + cantidadProducto);
-            cout << "Desea agregar otro producto? (s/n): ";
-            string respuesta;
-            cin >> respuesta;
-            while (respuesta == "s"){
-                cout << "Ingrese el codigo del producto: ";
-                string codigoProducto;
-                cin >> codigoProducto;
-                cout << "Ingrese la cantidad del primer producto: ";
-                string cantidadProducto;
-                cin >> cantidadProducto;
-                pedido->agregar("Producto", codigoProducto + "\t" + cantidadProducto);
-                cout << "Desea agregar otro producto? (s/n): ";
-                cin >> respuesta;
-            }
-            pedido->imprimir();
-            balanceador->PedidoInstantaneo.push(pedido);}}
-    //     }
-    //     else if (opcion == "2"){
-    //         cout << "Ingrese el nombre del constructor que desea modificar: ";
-    //         string nombreConstructor;
-    //         cin >> nombreConstructor;
-    //         cout << "Ingrese la categoria que desea asignarle: ";
-    //         string categoria;
-    //         cin >> categoria;
-    //         balanceador->ModificarConstructor(nombreConstructor, categoria);
-    //     }
-    //     else if (opcion == "3"){
-    //         cout << "Ingrese el nombre del elemento que desea apagar: ";
-    //         string nombreElemento;
-    //         cin >> nombreElemento;
-    //         balanceador->ApagarElemento(nombreElemento);
-    //     }
-    //     else if (opcion == "4"){
-    //         cout << "Apagando fabrica" << endl;
-    //         *isRunning = false;
-    //     }
-    //     else{
-    //         cout << "Opcion invalida" << endl;
-    //     }
-    // }
 
     while (*isRunning){
-        
         std::this_thread::sleep_for(std::chrono::seconds(5));
     }
+// Funcionamiento del programa
+
+    //Creacion de los threads
+     //thread lector de pedidos, lee pedidos cada segundo, los mete a ListaNombresDePedidos.
+    //std::thread MetePedidoEncola(Funcion); // Funcionamiento con un segundo de delay en comparacion a leer pedidos mete de uno a uno los pedidos en colas
+    //std::thread IniciarPedido(Funcion); //El balanceador se pone la gorra cada segundo 
+    //TODO Threads de la parte de Tony
+    
+    // cout << "test" << endl;
+    // ListaNombresPedidos = LeerDirectorio("Pedidos//Pendientes", "txt");
+    
+    // balanceador->MetePedidoEncola(ListaNombresPedidos);
+    // PedidoInstantaneo.front()->imprimir();
+    // NodoSimple * tmp = ListaNombresPedidos->primerNodo;
+    // ListaNombresPedidos->primerNodo = tmp->siguiente;
+    // balanceador->MetePedidoEncola(ListaNombresPedidos);
+    // Bajaprioridad.front()->imprimir();
+    
+    // bool Isrunning = true;
+    // while (Isrunning == true){
+    
+    //     bool Isrunning = true;
+    //     std::thread LeePedidos(LeerPedidosThread, "Pedidos//Pendientes", Isrunning, ListaNombresPedidos);
+    //     LeePedidos.detach();
+    //     while (Isrunning == true){
+    //         ListaNombresPedidos->imprimir();
+    //         std::this_thread::sleep_for(std::chrono::seconds(5));
+    //     }
+    // }
 }
