@@ -7,6 +7,7 @@ struct Balanceador {
     ListaCompleja * ListaProductos;
     ListaCompleja * ListaClientes;
     ListaSimple * ListaPedidos;
+    string Accion; // Nombre ejemplo: Balanceador 1
     int Estado; // 0 = Apagado, 1 = Encendido, 2 = En proceso
 
     //constructor 
@@ -82,7 +83,7 @@ struct Balanceador {
         ListaCompleja * PedidoActual = ValidaArchivo(ListaPedidos);
         if (PedidoActual == NULL)
             return;
-        
+        ListaPedidos->eliminarinicio();
         //Variables
         PedidoActual->imprimir();
         ListaSimple * Bitacora = new ListaSimple();
