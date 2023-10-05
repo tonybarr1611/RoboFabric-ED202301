@@ -9,10 +9,12 @@ struct Almacen{
         while (!paraAlisto->empty()) paraAlisto->pop();
     }
 
-    Almacen(ListaCompleja* _listaDeProductos){
+    Almacen(ListaCompleja* _listaDeProductos, queue<ListaCompleja*> * _paraAlisto){
         listaDeProductos = _listaDeProductos;
+        paraAlisto = _paraAlisto;
         while (!pedidos.empty()) pedidos.pop();
         while (!paraAlisto->empty()) paraAlisto->pop();
+
     }
 
     void imprimir(){
@@ -52,10 +54,19 @@ struct Almacen{
     void continuarPedido(){
         // Funcion que debe ejecutarse en un thread constante
         if (!pedidos.empty()){
-            paraAlisto->push(pedidos.front());
+            ListaCompleja * pedido = pedidos.front();
+            pedido->imprimir();
+            paraAlisto->push(pedido);
             pedidos.pop();
         }else{
             return;
+        }
+    }
+
+    void continuarPedidoThread(bool * isRunning){
+        while (*isRunning){
+            continuarPedido();
+            std::this_thread::sleep_for(std::chrono::seconds(4));
         }
     }
 };

@@ -4,16 +4,19 @@ struct Alistador{
     ListaCompleja * listaProductos;
     queue<Alistador*> * Alistadores;
     queue<ListaCompleja*> * Alistados;
+    ListaCompleja * pedido;
 
     Alistador(){
         encendido = true;
         id = 0;
     }
 
-    Alistador(bool _encendido, int _id, ListaCompleja * _listaProductos){
+    Alistador(bool _encendido, int _id, ListaCompleja * _listaProductos, queue<Alistador*> * _Alistadores, queue<ListaCompleja*> * _Alistados){
         encendido = _encendido;
         id = _id;
         listaProductos = _listaProductos;
+        Alistadores = _Alistadores;
+        Alistados = _Alistados;
     }
 
     void imprimir(){
@@ -35,7 +38,7 @@ struct Alistador{
         return fila + columna;
     }
 
-    void Alistar(ListaCompleja * pedido){
+    void Alistar(){
         // Solo llamar por medio de un hilo
         NodoComplejo * tmp = pedido->primerNodo->siguiente->siguiente;
         while (tmp != NULL && tmp->tipo != "Bitacora"){

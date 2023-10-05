@@ -77,11 +77,19 @@ struct Bodega {
             paraAlisto->pop();
             Alistador * alistador = Alistadores->front();
             Alistadores->pop();
-            // // Revisar hilo
-            // std::thread hilo(&Alistador::Alistar, alistador, pedido);
-            // hilo.detach();
+            // Revisar hilo
+            alistador->pedido = pedido;
+            std::thread hilo(&Alistador::Alistar, alistador);
+            hilo.detach();
         }else{
             return;
+        }
+    }
+
+    void AlistarPedidosThread(bool * isRunning){
+        while (*isRunning){
+            this->continuarPedido();
+            std::this_thread::sleep_for(std::chrono::seconds(4));
         }
     }
 };

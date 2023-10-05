@@ -24,15 +24,16 @@ struct Balanceador;
 
 // Declaraciones de Funciones
 string HoraSistema();
-ListaSimple *SepararStringsPorTabs(string linea);
-ListaCompleja *SepararStringsPorLineas(string linea, string tipo);
+ListaSimple *SepararStringsPorTabs(string);
+ListaCompleja *SepararStringsPorLineas(string, string);
 ListaSimple *LeerDirectorio(string, string);
 ListaCompleja *LeerArchivo(string, string, string); // Directorio, tipo de archivo, tipo de lista
 ListaCompleja *LeerArchivo(ListaSimple*, string); // Lista de archivos, tipo de lista
 ListaCompleja *LeerArchivo(NodoSimple*, string); // Nodo de archivos, tipo de lista
 int RetornaPrioridad(ListaCompleja *, string);
-
-
+string nombreArchivo(string);
+bool MoverArchivotxt(string, string);
+void EscribirArchivo(string, string);
 // Estructuras 
 struct NodoSimple {
     // NodoSimple es un nodo de ListaSimple

@@ -5,6 +5,8 @@ struct Balanceador {
     queue<ListaCompleja*> PedidoInstantaneo;
     queue<ListaCompleja*> * pedidosAlmacen;
     ListaCompleja * ListaProductos;
+    ListaCompleja * ListaClientes;
+    ListaSimple * ListaPedidos;
     int Estado; // 0 = Apagado, 1 = Encendido, 2 = En proceso
 
     //constructor 
@@ -18,27 +20,75 @@ struct Balanceador {
         while (!Altaprioridad.empty()) Altaprioridad.pop();
         while (!Bajaprioridad.empty()) Bajaprioridad.pop();
         while (!PedidoInstantaneo.empty()) PedidoInstantaneo.pop();
+        ListaCompleja * ListaProductos = new ListaCompleja();
+        ListaCompleja * ListaClientes = new ListaCompleja();
     }
 
-    Balanceador(int Estado, ListaCompleja * ListaProductos, queue<ListaCompleja*> Altaprioridad, queue<ListaCompleja*> Bajaprioridad, queue<ListaCompleja*> PedidoInstantaneo, queue<ListaCompleja*> * pedidosAlmacen) {
+    Balanceador(int Estado, ListaCompleja * ListaProductos, queue<ListaCompleja*> Altaprioridad, queue<ListaCompleja*> Bajaprioridad, queue<ListaCompleja*> PedidoInstantaneo, queue<ListaCompleja*> * pedidosAlmacen, ListaCompleja * ListaClientes, ListaSimple * ListaPedidos) {
         this->Altaprioridad = Altaprioridad;
         this->Bajaprioridad = Bajaprioridad;
         this->PedidoInstantaneo = PedidoInstantaneo;
         this->ListaProductos = ListaProductos; 
         this->Estado = Estado;
         this->pedidosAlmacen = pedidosAlmacen;
+        this->ListaClientes = ListaClientes;
+        this->ListaPedidos = ListaPedidos;
         for (int i = 0; i < 10; i++) {
             ArrayConstructores[i] = new Constructor("Constructor " + to_string(i), 1, true, "D", ListaProductos);
         }
     }
 
     //Metodos
-    void MetePedidoEncola(ListaSimple * ListaPedidos, ListaCompleja * ListaClientes){
+    string EncuentraErrorPedido(NodoSimple * Directorio){
+        //Esta funcion encuentra el error en el pedido y lo retorna en un tipo string 
+        ListaCompleja * PedidoActual = LeerArchivo(Directorio, "Pedido");
+        if (ListaClientes->Buscar(PedidoActual->primerNodo->siguiente->lista->primerNodo->dato) == NULL ){
+            return "Error: El cliente no existe";
+        }else if (PedidoActual->primerNodo->siguiente->siguiente == NULL){
+            return "Error: No hay productos en el pedido";
+        }
+        NodoComplejo * tmp = PedidoActual->primerNodo->siguiente->siguiente;
+        while (tmp != NULL){
+            if (ListaProductos->Buscar(tmp->lista->primerNodo->dato) == NULL)
+                return "Error: El producto: " + tmp->lista->primerNodo->dato + " no existe";
+        tmp = tmp->siguiente;
+        }
+        return "true";
+    }
+    
+    ListaCompleja * ValidaArchivo(ListaSimple * Listapedidos ){
+        //Esta funcion valida el archivo, si no hay error retorna el pedido y lo mueve a procesados, si hay error lo mueve a la carpeta de error
+        if (Listapedidos->primerNodo == NULL){
+            cout << "No hay pedidos en la lista" << endl;
+            return NULL;
+        }
+        string definer = EncuentraErrorPedido(Listapedidos->primerNodo);
+        cout << nombreArchivo(Listapedidos->primerNodo->dato) << endl;
+        if (definer == "true"){
+            MoverArchivotxt("Pedidos/Pendientes/" + nombreArchivo(Listapedidos->primerNodo->dato), "Pedidos/Procesados");
+            ListaPedidos->primerNodo->dato = "Pedidos/Procesados/" + nombreArchivo(Listapedidos->primerNodo->dato);
+            return LeerArchivo(Listapedidos->primerNodo, "Pedido");
+        }else{
+            string Archivo = "Pedidos//Pendientes//" + nombreArchivo(Listapedidos->primerNodo->dato);
+            EscribirArchivo(Archivo, definer);
+            MoverArchivotxt("Pedidos/Pendientes/" + nombreArchivo(Listapedidos->primerNodo->dato), "Pedidos/Errores");
+        }
+        return NULL;
+    }
+
+    void MetePedidoEncola(){
         //Esta Funcion Unicamente Comprueba un pedidos en ListaPedidos en caso da dar error los mueves al archivo de error
-        ListaCompleja * PedidoActual= LeerArchivo(ListaPedidos->primerNodo , "Pedido");
+        //Valida el archivo
+        ListaCompleja * PedidoActual = ValidaArchivo(ListaPedidos);
+        if (PedidoActual == NULL)
+            return;
+        
+        //Variables
+        PedidoActual->imprimir();
         ListaSimple * Bitacora = new ListaSimple();
         int Prioridad = RetornaPrioridad(ListaClientes, PedidoActual->primerNodo->siguiente->lista->primerNodo->dato);
 
+        //Funcionamiento
         cout << "Se esta procesando el pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << endl;
         Bitacora->agregar("Pedido:\t\t" + PedidoActual->primerNodo->lista->primerNodo->dato);
         Bitacora->agregar("Cliente:\t\t" + PedidoActual->primerNodo->siguiente->lista->primerNodo->dato);
@@ -58,6 +108,14 @@ struct Balanceador {
         // TODO Codigo que mueve archivos a error, no es un pedido
         cout << "Se metio el pedido a la cola" << endl;
     }
+
+    void MetePedidoEncolaThread(bool * isRunning){
+        while (* isRunning){
+            MetePedidoEncola();
+            std::this_thread::sleep_for(std::chrono::seconds(4));
+        }
+    }
+
     ListaCompleja * RetornaPedido(){
         //Esta funcion retorna el pedido que se va a procesar
         ListaCompleja * PedidoActual = NULL;
@@ -93,7 +151,6 @@ struct Balanceador {
         // TODO llamar por medio de thread
         ConstructorValido->Disponibilidad = false;
         std::thread hilo(&Constructor::AgregarCantidadAlProducto, ConstructorValido, CodigoProducto, ProductosNecesitados);
-        // ConstructorValido->AgregarCantidadAlProducto(CodigoProducto, ProductosNecesitados);
         hilo.detach();
         ConstructorValido->imprimir();
         return ConstructorValido;
@@ -150,5 +207,12 @@ struct Balanceador {
         }
         std::thread hilo(&Balanceador::validarFinalPedido, this, ConstructoresUsados, PedidoActual);
         hilo.detach();
+    }
+
+    void IniciaPedidoThread(bool * isRunning){
+        while (* isRunning){
+            IniciaPedido();
+            std::this_thread::sleep_for(std::chrono::seconds(4));
+        }
     }
 };

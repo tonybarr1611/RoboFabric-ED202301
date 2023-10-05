@@ -105,12 +105,45 @@ int RetornaPrioridad(ListaCompleja * ListaClientes, string codigo){
     if (ClienteBuscado != NULL){
         return stoi(ClienteBuscado->lista->ultimoNodo->dato);}
     else{ return -1;
-    }}
+    }
+}
 
+string nombreArchivo(string directorio){
+    while (directorio.find("/") != string::npos && directorio.find("") != directorio.length() - 1)
+        directorio = directorio.substr(directorio.find("/") + 1, directorio.length());
+    if (directorio.find("Pendientes") != string::npos)
+        directorio = directorio.substr(directorio.find("Pendientes") + 11, directorio.length());
+    return directorio;
+}
 
-void LeerPedidosThread(string Directorio, bool Isrunning, ListaSimple* ListaPedidos){
+bool MoverArchivotxt(string Directorio, string Destino){
+    //Mueve un archivo de un directorio a otro
+    // MoverArchivotxt("Pedidos/Pendientes/pedido1.txt", "Pedidos/Completados");
+    string filename = Directorio;
+    filename = nombreArchivo(filename);
+    string path = Directorio;
+    string pathDestino = Destino + "/" + filename;;
+    if (fs::exists(path)){
+        fs::rename(path, pathDestino);
+        return true;
+    }
+    else
+        return false;
+}
+void EscribirArchivo(string Archivo, string texto){
+    //Escribe en un archivo
+    //EscribirArchivo("Pedidos/Completados/pedido1.txt", "Pedido Completado");
+std::ofstream archivo(Archivo, std::ios::app);
+        if (!archivo.is_open()) {
+        std::cerr << "No se pudo abrir el archivo." << std::endl;
+    }
+        archivo << endl << texto;
+        archivo.close();
+}
+
+void LeerPedidosThread(string Directorio, bool * Isrunning, ListaSimple* ListaPedidos){
     //thread 
-    while(Isrunning){
+    while(*Isrunning){
         std::this_thread::sleep_for(std::chrono::seconds(5));
         ListaSimple* tmp = LeerDirectorio(Directorio, "txt");
         NodoSimple* tmpNodo = tmp->primerNodo;
