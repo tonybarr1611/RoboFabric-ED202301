@@ -23,9 +23,13 @@ void Menu(){
     queue<ListaCompleja*> * Empacados = new queue<ListaCompleja*>;
 
     //Cuando se crea el balanceador tiene todos sus constructores con categoria D 
+    ListaCompleja* listaConstructores = LeerArchivo("Constructores", "txt", "Constructor");
+    
     Almacen * almacen = new Almacen(listaDeProductos, paraAlisto);
     pedidosAlmacen = &(almacen->pedidos);
     Balanceador * balanceador = new Balanceador(1, listaDeProductos, Altaprioridad, Bajaprioridad, PedidoInstantaneo, pedidosAlmacen, ListaClientes, ListaNombresPedidos);
+    balanceador->CargaConstructores(listaConstructores);
+    balanceador->ImprimeConstructores();
     Bodega * bodega = new Bodega(listaDeProductos, paraAlisto, Alistadores);
     Empacador * empacador = new Empacador(true, Empacados);
     Alistados = &(empacador->PorEmpacar);
@@ -34,23 +38,23 @@ void Menu(){
         Alistadores->push(alistador);
     }
 
-    std::thread LeePedidos(LeerPedidosThread, "Pedidos/Pendientes", std::ref(isRunning), std::ref(ListaNombresPedidos));
-    LeePedidos.detach();
+    // std::thread LeePedidos(LeerPedidosThread, "Pedidos/Pendientes", std::ref(isRunning), std::ref(ListaNombresPedidos));
+    // LeePedidos.detach();
 
-    std::thread IniciarPedido(&Balanceador::IniciaPedidoThread, balanceador, std::ref(isRunning));
-    IniciarPedido.detach();
+    // std::thread IniciarPedido(&Balanceador::IniciaPedidoThread, balanceador, std::ref(isRunning));
+    // IniciarPedido.detach();
 
-    std::thread SeguirPedido(&Almacen::continuarPedidoThread, almacen, std::ref(isRunning));
-    SeguirPedido.detach();
+    // std::thread SeguirPedido(&Almacen::continuarPedidoThread, almacen, std::ref(isRunning));
+    // SeguirPedido.detach();
 
-    std::thread EncolarPedidos(&Balanceador::MetePedidoEncolaThread, balanceador, std::ref(isRunning));
-    EncolarPedidos.detach();
+    // std::thread EncolarPedidos(&Balanceador::MetePedidoEncolaThread, balanceador, std::ref(isRunning));
+    // EncolarPedidos.detach();
 
-    std::thread AlistarPedido(&Bodega::AlistarPedidosThread, bodega, std::ref(isRunning));
-    AlistarPedido.detach();
+    // std::thread AlistarPedido(&Bodega::AlistarPedidosThread, bodega, std::ref(isRunning));
+    // AlistarPedido.detach();
 
-    std::thread EmpacarPedido(&Empacador::EmpacarPedidosThread, empacador, std::ref(isRunning));
-    EmpacarPedido.detach();
+    // std::thread EmpacarPedido(&Empacador::EmpacarPedidosThread, empacador, std::ref(isRunning));
+    // EmpacarPedido.detach();
 
     cout << "           Bienvenido a la fabrica" << endl;
     cout << "Desde aqui podra modificar el funcionamiento de la fabrica" << endl;

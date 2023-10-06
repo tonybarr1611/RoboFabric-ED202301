@@ -7,7 +7,7 @@ struct Balanceador {
     ListaCompleja * ListaProductos;
     ListaCompleja * ListaClientes;
     ListaSimple * ListaPedidos;
-    string Accion; // Nombre ejemplo: Balanceador 1
+    string Accion; 
     int Estado; // 0 = Apagado, 1 = Encendido, 2 = En proceso
 
     //constructor 
@@ -34,12 +34,28 @@ struct Balanceador {
         this->pedidosAlmacen = pedidosAlmacen;
         this->ListaClientes = ListaClientes;
         this->ListaPedidos = ListaPedidos;
+
         for (int i = 0; i < 10; i++) {
-            ArrayConstructores[i] = new Constructor("Constructor " + to_string(i), 1, true, "D", ListaProductos);
+            ArrayConstructores[i] = new Constructor();
         }
     }
 
     //Metodos
+    void ImprimeConstructores(){
+        //Esta funcion imprime los constructores
+        for (int i = 0; i < 10; i++){
+            ArrayConstructores[i]->imprimir();
+        }
+    }
+    void CargaConstructores(ListaCompleja* ListaConstructores){
+        //Esta funcion carga los constructores en el array de constructores
+        NodoComplejo * tmp = ListaConstructores->primerNodo;
+        int contador = 0;
+        while (tmp != NULL){
+            ArrayConstructores[contador] = new Constructor(tmp->lista->primerNodo->dato, 1, true, tmp->lista->primerNodo->siguiente->dato, ListaProductos);
+            tmp = tmp->siguiente;
+        }
+    }
     string EncuentraErrorPedido(NodoSimple * Directorio){
         //Esta funcion encuentra el error en el pedido y lo retorna en un tipo string 
         ListaCompleja * PedidoActual = LeerArchivo(Directorio, "Pedido");

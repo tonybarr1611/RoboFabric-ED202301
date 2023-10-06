@@ -11,6 +11,8 @@ struct Constructor{
         Estado = 0;
         Disponibilidad = true;
         tipoProducto = "D";
+        ListaProductos = new ListaCompleja();
+        Accion = "";
     }
 
     Constructor(string Nombre, int Estado, bool Disponibilidad, string tipoProducto, ListaCompleja * ListaProductos){
@@ -28,6 +30,7 @@ struct Constructor{
         cout << "Estado: " << Estado << "\n";
         cout << "Tipo de Producto: " << tipoProducto << "\n";
         cout << "Disponibilidad: " << Disponibilidad << "\n";
+        cout << "Accion" << Accion << "\n";
     }
 
     void AgregarCantidadAlProducto(string Codigo, int Cantidad){
