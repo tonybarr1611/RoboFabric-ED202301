@@ -120,15 +120,15 @@ struct Balanceador {
     ListaCompleja * RetornaPedido(){
         //Esta funcion retorna el pedido que se va a procesar
         ListaCompleja * PedidoActual = NULL;
-        if (!Altaprioridad.empty()){
-            PedidoActual = Altaprioridad.front();
-            Altaprioridad.pop();
+        if (!PedidoInstantaneo.empty()){
+            PedidoActual = PedidoInstantaneo.front();
+            PedidoInstantaneo.pop();
         }else if (!Bajaprioridad.empty()){
             PedidoActual = Bajaprioridad.front();
             Bajaprioridad.pop();
-        }else if (!PedidoInstantaneo.empty()){
-            PedidoActual = PedidoInstantaneo.front();
-            PedidoInstantaneo.pop();
+        }else if (!Altaprioridad.empty()){
+            PedidoActual = Altaprioridad.front();
+            Altaprioridad.pop();
         }
         return PedidoActual;
     }
@@ -213,7 +213,7 @@ struct Balanceador {
     void IniciaPedidoThread(bool * isRunning){
         while (* isRunning){
             IniciaPedido();
-            std::this_thread::sleep_for(std::chrono::seconds(4));
+            std::this_thread::sleep_for(std::chrono::seconds(5));
         }
     }
 };
