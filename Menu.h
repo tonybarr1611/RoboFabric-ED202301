@@ -34,8 +34,8 @@ void Menu(){
         Alistadores->push(alistador);
     }
 
-    //std::thread LeePedidos(LeerPedidosThread, "Pedidos/Pendientes", std::ref(isRunning), std::ref(ListaNombresPedidos));
-    //LeePedidos.detach();
+    std::thread LeePedidos(LeerPedidosThread, "Pedidos/Pendientes", std::ref(isRunning), std::ref(ListaNombresPedidos));
+    LeePedidos.detach();
 
     std::thread IniciarPedido(&Balanceador::IniciaPedidoThread, balanceador, std::ref(isRunning));
     IniciarPedido.detach();
@@ -60,32 +60,29 @@ void Menu(){
     cout << "4. Apagar fabrica " << endl;
     string opcion;
     while (opcion != "4"){
-        cout << "Ingrese la opcion que desea realizar: ";
-        cin >> opcion;
+        cout << "Ingrese la opcion que desea realizar:";
+        getline(cin, opcion);
         if (opcion == "1"){
-            cout << "Ingrese el codigo del producto: ";
-            string codigoProducto;
-            cin >> codigoProducto;
-            cout << "Ingrese la cantidad del primer producto: ";
-            string cantidadProducto;
-            cin >> cantidadProducto;
             ListaCompleja * pedido = new ListaCompleja();
+            ListaSimple * producto = new ListaSimple();
             pedido->agregar("Producto", "Pedido Directo");
             pedido->agregar("Producto", "Terminal");
-            pedido->agregar("Producto", codigoProducto + "\t" + cantidadProducto);
-            cout << "Desea agregar otro producto? (s/n): ";
-            string respuesta;
-            cin >> respuesta;
+            string respuesta = "s";
             while (respuesta == "s"){
-                cout << "Ingrese el codigo del producto: ";
+                cout << "Ingrese el codigo del producto:";
                 string codigoProducto;
-                cin >> codigoProducto;
-                cout << "Ingrese la cantidad del primer producto: ";
+                getline(cin, codigoProducto);
+
+                cout << "Ingrese la cantidad del producto:";
                 string cantidadProducto;
-                cin >> cantidadProducto;
-                pedido->agregar("Producto", codigoProducto + "\t" + cantidadProducto);
-                cout << "Desea agregar otro producto? (s/n): ";
-                cin >> respuesta;
+                getline(cin, cantidadProducto);
+                // Añadir como lista simple cada producto
+                producto->agregar(codigoProducto);
+                producto->agregar(cantidadProducto);
+                pedido->agregar("Producto", producto);
+                producto = new ListaSimple();
+                cout << "Desea agregar otro producto? (s/n):";
+                getline(cin, respuesta);
             }
             pedido->imprimir();
             balanceador->PedidoInstantaneo.push(pedido);}}

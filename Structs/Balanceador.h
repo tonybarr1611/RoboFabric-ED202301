@@ -60,7 +60,7 @@ struct Balanceador {
     ListaCompleja * ValidaArchivo(ListaSimple * Listapedidos ){
         //Esta funcion valida el archivo, si no hay error retorna el pedido y lo mueve a procesados, si hay error lo mueve a la carpeta de error
         if (Listapedidos->primerNodo == NULL){
-            cout << "No hay pedidos en la lista" << endl;
+            //cout << "No hay pedidos en la lista" << endl;
             return NULL;
         }
         string definer = EncuentraErrorPedido(Listapedidos->primerNodo);
@@ -191,7 +191,7 @@ struct Balanceador {
         ListaCompleja * PedidoActual = RetornaPedido();
         queue<Constructor*> * ConstructoresUsados = new queue<Constructor*>();
         if (PedidoActual == NULL){
-            cout << "No hay pedidos en las colas" << endl;
+            //cout << "No hay pedidos en las colas" << endl;
             return; 
         }
         NodoComplejo * tmp= PedidoActual->primerNodo->siguiente->siguiente;
