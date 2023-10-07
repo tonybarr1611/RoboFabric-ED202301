@@ -4,6 +4,7 @@ struct Constructor{
     int Estado; //Apagado = 0, Encendido = 1, En proceso = 2
     bool Disponibilidad; // Disponibilidad del constructor
     string tipoProducto; // D Seria que esta disponible para todos los productos
+    bool Prioridad = false; // Prioridad del constructor
     string Accion = ""; // Accion que esta realizando el constructor
     //constructor
     Constructor(){
@@ -13,14 +14,17 @@ struct Constructor{
         tipoProducto = "D";
         ListaProductos = new ListaCompleja();
         Accion = "";
-    }
-
-    Constructor(string Nombre, int Estado, bool Disponibilidad, string tipoProducto, ListaCompleja * ListaProductos){
+    }    
+    Constructor(string Nombre, int Estado, bool Disponibilidad, string tipoProducto, string prioridad, ListaCompleja* ListaProductos){
         this->ListaProductos = ListaProductos;
         this->Nombre = Nombre;
         this->Estado = Estado;
         this->tipoProducto = tipoProducto;
         this->Disponibilidad = Disponibilidad;
+        if (prioridad == "S"){
+            Prioridad = true;
+        }
+
     }
 
     //Metodos

@@ -4,6 +4,7 @@ struct Balanceador {
     queue<ListaCompleja*> Bajaprioridad;
     queue<ListaCompleja*> PedidoInstantaneo;
     queue<ListaCompleja*> * pedidosAlmacen;
+    queue<Constructor*> Constructores_Prioridad = queue<Constructor*>();
     ListaCompleja * ListaProductos;
     ListaCompleja * ListaClientes;
     ListaSimple * ListaPedidos;
@@ -23,6 +24,8 @@ struct Balanceador {
         while (!PedidoInstantaneo.empty()) PedidoInstantaneo.pop();
         ListaCompleja * ListaProductos = new ListaCompleja();
         ListaCompleja * ListaClientes = new ListaCompleja();
+        ListaSimple * ListaPedidos = new ListaSimple();
+
     }
 
     Balanceador(int Estado, ListaCompleja * ListaProductos, queue<ListaCompleja*> Altaprioridad, queue<ListaCompleja*> Bajaprioridad, queue<ListaCompleja*> PedidoInstantaneo, queue<ListaCompleja*> * pedidosAlmacen, ListaCompleja * ListaClientes, ListaSimple * ListaPedidos) {
@@ -45,6 +48,15 @@ struct Balanceador {
         //Esta funcion imprime los constructores
         for (int i = 0; i < 10; i++){
             ArrayConstructores[i]->imprimir();
+            cout << endl;
+        }
+    }
+    void Comprueba_prioridad(){
+        //Esta funcion comprueba la prioridad de los constructores
+        for (int i = 0; i < 10; i++){
+            if (ArrayConstructores[i]->Prioridad == true){
+                Constructores_Prioridad.push(ArrayConstructores[i]);
+            }
         }
     }
     void CargaConstructores(ListaCompleja* ListaConstructores){
@@ -52,8 +64,9 @@ struct Balanceador {
         NodoComplejo * tmp = ListaConstructores->primerNodo;
         int contador = 0;
         while (tmp != NULL){
-            ArrayConstructores[contador] = new Constructor(tmp->lista->primerNodo->dato, 1, true, tmp->lista->primerNodo->siguiente->dato, ListaProductos);
+            ArrayConstructores[contador] = new Constructor(tmp->lista->primerNodo->dato, stoi(tmp->lista->primerNodo->siguiente->dato), true, tmp->lista->primerNodo->siguiente->siguiente->dato, tmp->lista->primerNodo->siguiente->siguiente->siguiente->dato , ListaProductos);
             tmp = tmp->siguiente;
+            contador++;
         }
     }
     string EncuentraErrorPedido(NodoSimple * Directorio){
@@ -151,6 +164,17 @@ struct Balanceador {
 
     Constructor * RetornaConstructorValido(string tipoProducto){
         //Esta funcion retorna el constructor que se va a usar
+        //Comprueba la prioridad
+        Comprueba_prioridad();
+        
+        while (Constructores_Prioridad.empty() == false){
+            if (Constructores_Prioridad.front()->tipoProducto == tipoProducto && Constructores_Prioridad.front()->Disponibilidad == true){
+                return Constructores_Prioridad.front();
+            }else if (Constructores_Prioridad.front()->tipoProducto == "D" && Constructores_Prioridad.front()->Disponibilidad == true){
+                return Constructores_Prioridad.front();
+            }
+        }
+        
         for (int i = 0; i < 10; i++){
             if (ArrayConstructores[i]->tipoProducto == tipoProducto && ArrayConstructores[i]->Disponibilidad == true){
                 return ArrayConstructores[i];
