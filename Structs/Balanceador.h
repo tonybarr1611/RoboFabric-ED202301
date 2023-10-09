@@ -9,7 +9,7 @@ struct Balanceador {
     ListaCompleja * ListaClientes;
     ListaSimple * ListaPedidos;
     string Accion; 
-    int Estado; // 0 = Apagado, 1 = Encendido, 2 = En proceso
+    int Estado = 1; // 0 = Apagado, 1 = Encendido
 
     //constructor 
     Balanceador() {
@@ -44,9 +44,39 @@ struct Balanceador {
     }
 
     //Metodos
+    void ModificaConstructorPrioridad(int Posicion, string Prioridad){
+        //Esta funcion modifica la prioridad del constructor
+        if (Prioridad == "S")
+            ArrayConstructores[Posicion]->Prioridad = true;
+        else
+            ArrayConstructores[Posicion]->Prioridad = false;
+        
+    }
+
+    
+
+    void ModificaConstructorTipo(int Posicion, string Tipo){
+        //Esta funcion modifica el tipo de producto que puede construir el constructor
+        ArrayConstructores[Posicion]->tipoProducto = Tipo;
+    }	
+
+    
+
+    void ModificaConstructorEstado(int posicion){
+        //Esta funcion modifica el estado del constructor
+        if (Estado == 0)
+            ArrayConstructores[posicion]->Estado = 1;
+        else
+            ArrayConstructores[posicion]->Estado = 0;
+    }
+
+
+
     void ImprimeConstructores(){
         //Esta funcion imprime los constructores
+        cout << endl;
         for (int i = 0; i < 10; i++){
+            cout << "Posicion: " << i << endl;
             ArrayConstructores[i]->imprimir();
             cout << endl;
         }
@@ -55,6 +85,7 @@ struct Balanceador {
         //Esta funcion comprueba la prioridad de los constructores
         for (int i = 0; i < 10; i++){
             if (ArrayConstructores[i]->Prioridad == true){
+                cout << "Se encontro un constructor con prioridad" << endl;
                 Constructores_Prioridad.push(ArrayConstructores[i]);
             }
         }
@@ -168,17 +199,17 @@ struct Balanceador {
         Comprueba_prioridad();
         
         while (Constructores_Prioridad.empty() == false){
-            if (Constructores_Prioridad.front()->tipoProducto == tipoProducto && Constructores_Prioridad.front()->Disponibilidad == true){
+            if (Constructores_Prioridad.front()->tipoProducto == tipoProducto && Constructores_Prioridad.front()->Disponibilidad == true && Constructores_Prioridad.front()->Estado == 1){
                 return Constructores_Prioridad.front();
-            }else if (Constructores_Prioridad.front()->tipoProducto == "D" && Constructores_Prioridad.front()->Disponibilidad == true){
+            }else if (Constructores_Prioridad.front()->tipoProducto == "D" && Constructores_Prioridad.front()->Disponibilidad == true && Constructores_Prioridad.front()->Estado == 1){
                 return Constructores_Prioridad.front();
             }
         }
         
         for (int i = 0; i < 10; i++){
-            if (ArrayConstructores[i]->tipoProducto == tipoProducto && ArrayConstructores[i]->Disponibilidad == true){
+            if (ArrayConstructores[i]->tipoProducto == tipoProducto && ArrayConstructores[i]->Disponibilidad == true && ArrayConstructores[i]->Estado == 1){
                 return ArrayConstructores[i];
-            }else if (ArrayConstructores[i]->tipoProducto == "D" && ArrayConstructores[i]->Disponibilidad == true){
+            }else if (ArrayConstructores[i]->tipoProducto == "D" && ArrayConstructores[i]->Disponibilidad == true && ArrayConstructores[i]->Estado == 1){
                 return ArrayConstructores[i];
             }
         }
@@ -193,7 +224,6 @@ struct Balanceador {
         ConstructorValido->Disponibilidad = false;
         std::thread hilo(&Constructor::AgregarCantidadAlProducto, ConstructorValido, CodigoProducto, ProductosNecesitados);
         hilo.detach();
-        ConstructorValido->imprimir();
         return ConstructorValido;
     }
 

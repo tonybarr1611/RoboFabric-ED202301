@@ -28,13 +28,19 @@ struct Constructor{
     }
 
     //Metodos
+    void imprimirAccion(){
+        cout << "Constructor: " << Nombre << "\n";
+        if (Accion == "")
+            cout << "No esta realizando ninguna accion" << "\n";
+        else
+            cout << "Accion" << Accion << "\n";
+    }
 
     void imprimir(){
-        cout << "Constructor: " << Nombre << "\n";
+        cout << Nombre << "\n";
         cout << "Estado: " << Estado << "\n";
         cout << "Tipo de Producto: " << tipoProducto << "\n";
         cout << "Disponibilidad: " << Disponibilidad << "\n";
-        cout << "Accion" << Accion << "\n";
     }
 
     void AgregarCantidadAlProducto(string Codigo, int Cantidad){

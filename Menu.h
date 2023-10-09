@@ -28,7 +28,7 @@ void Menu(){
     pedidosAlmacen = &(almacen->pedidos);
     Balanceador * balanceador = new Balanceador(1, listaDeProductos, Altaprioridad, Bajaprioridad, PedidoInstantaneo, pedidosAlmacen, ListaClientes, ListaNombresPedidos);
     balanceador->CargaConstructores(listaConstructores);
-    balanceador->ImprimeConstructores();
+    
     Bodega * bodega = new Bodega(listaDeProductos, paraAlisto, Alistadores);
     Empacador * empacador = new Empacador(true, Empacados);
     Alistados = &(empacador->PorEmpacar);
@@ -36,6 +36,8 @@ void Menu(){
         Alistador * alistador = new Alistador(true, i+1, listaDeProductos, Alistadores, Alistados);
         Alistadores->push(alistador);
     }
+
+    balanceador->Comprueba_prioridad();
 
     std::thread LeePedidos(LeerPedidosThread, "Pedidos/Pendientes", std::ref(isRunning), std::ref(ListaNombresPedidos));
     LeePedidos.detach();
@@ -65,7 +67,9 @@ void Menu(){
     while (opcion != "4"){
         cout << "Ingrese la opcion que desea realizar:";
         getline(cin, opcion);
+
         if (opcion == "1"){
+            //Pedido Instantaneo
             ListaCompleja * pedido = new ListaCompleja();
             ListaSimple * producto = new ListaSimple();
             pedido->agregar("Producto", "Pedido Directo");
@@ -79,6 +83,11 @@ void Menu(){
                 cout << "Ingrese la cantidad del producto:";
                 string cantidadProducto;
                 getline(cin, cantidadProducto);
+                char cantidad = cantidadProducto[0];
+                if (!isdigit(cantidad)){
+                    cout << "Cantidad invalida" << endl;
+                    continue;
+                }
                 // Añadir como lista simple cada producto
                 producto->agregar(codigoProducto);
                 producto->agregar(cantidadProducto);
@@ -87,17 +96,47 @@ void Menu(){
                 cout << "Desea agregar otro producto? (s/n):";
                 getline(cin, respuesta);
             }
-            balanceador->PedidoInstantaneo.push(pedido);}}
-    //     }
-    //     else if (opcion == "2"){
-    //         cout << "Ingrese el nombre del constructor que desea modificar: ";
-    //         string nombreConstructor;
-    //         cin >> nombreConstructor;
-    //         cout << "Ingrese la categoria que desea asignarle: ";
-    //         string categoria;
-    //         cin >> categoria;
-    //         balanceador->ModificarConstructor(nombreConstructor, categoria);
-    //     }
+            balanceador->PedidoInstantaneo.push(pedido);
+        }
+
+        else if (opcion == "2"){
+            //Modificar constructores
+            balanceador->ImprimeConstructores();
+            cout << "Ingrese la posicion del constructor que desea modificar: ";
+            string posicion;
+            getline(cin, posicion);
+            int pos = stoi(posicion);
+            cout << "¿Que desea modificar del constructor?" << pos << endl;
+            cout << "1. Cambiar Tipo , 2. Cambiar Prioridad" << endl;
+            string subopcion;
+            getline(cin, subopcion);
+            if (subopcion == "1"){
+                cout << "Ingrese el nuevo tipo del constructor" << endl;
+                cout <<  "    Este debe ser A,B,C o D" << endl;
+                string tipo;
+                getline(cin, tipo);
+                char NuevoTipo = toupper(tipo[0]);
+                if (NuevoTipo != 'A' && NuevoTipo != 'B' && NuevoTipo != 'C' && NuevoTipo != 'D'){
+                    cout << "Tipo invalido" << endl;
+                    continue;
+                }
+                balanceador->ModificaConstructorTipo(pos, tipo);
+                cout << "Tipo modificado" << endl;
+                balanceador->ArrayConstructores[pos]->imprimir();
+            }
+            else if (subopcion == "2"){
+                cout << "Ingrese la nueva prioridad del constructor: ";
+                string prioridad;
+                getline(cin, prioridad);
+                balanceador->ModificaConstructorPrioridad(pos, prioridad);
+            }
+            else{
+                cout << "Opcion invalida" << endl;
+            }
+
+    
+    }
+}
     //     else if (opcion == "3"){
     //         cout << "Ingrese el nombre del elemento que desea apagar: ";
     //         string nombreElemento;
