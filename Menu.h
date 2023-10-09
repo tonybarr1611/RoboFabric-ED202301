@@ -125,10 +125,27 @@ void Menu(){
                 balanceador->ArrayConstructores[pos]->imprimir();
             }
             else if (subopcion == "2"){
-                cout << "Ingrese la nueva prioridad del constructor: ";
-                string prioridad;
-                getline(cin, prioridad);
-                balanceador->ModificaConstructorPrioridad(pos, prioridad);
+                string Respuesta;
+                if (balanceador->ArrayConstructores[pos]->Prioridad){
+                    cout << "El constructor ya tiene prioridad, ¿Desea quitaserla?" << endl;
+                    getline(cin, Respuesta);
+                    if (Respuesta == "s"){
+                        balanceador->ModificaConstructorPrioridad(pos, "N");
+                    }
+                    else{
+                        continue;
+                    }
+                }
+                else{
+                    cout << "El constructor no tiene prioridad, ¿Desea darsela?" << endl;
+                    getline(cin, Respuesta);
+                    if (Respuesta == "s"){
+                        balanceador->ModificaConstructorPrioridad(pos, "S");
+                    }
+                    else{
+                        continue;
+                    }
+                }
             }
             else{
                 cout << "Opcion invalida" << endl;

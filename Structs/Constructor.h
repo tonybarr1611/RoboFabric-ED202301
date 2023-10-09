@@ -41,6 +41,10 @@ struct Constructor{
         cout << "Estado: " << Estado << "\n";
         cout << "Tipo de Producto: " << tipoProducto << "\n";
         cout << "Disponibilidad: " << Disponibilidad << "\n";
+        if (Prioridad)
+            cout << "Prioridad: Si" << "\n";
+        else
+            cout << "Prioridad: No" << "\n";
     }
 
     void AgregarCantidadAlProducto(string Codigo, int Cantidad){
