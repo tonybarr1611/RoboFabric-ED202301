@@ -8,7 +8,7 @@ struct Balanceador {
     ListaCompleja * ListaProductos;
     ListaCompleja * ListaClientes;
     ListaSimple * ListaPedidos;
-    string Accion; 
+    string* Accion; 
     int Estado = 1; // 0 = Apagado, 1 = Encendido
 
     //constructor 
@@ -37,7 +37,7 @@ struct Balanceador {
         this->pedidosAlmacen = pedidosAlmacen;
         this->ListaClientes = ListaClientes;
         this->ListaPedidos = ListaPedidos;
-
+        Accion = new string("Leyendo Pedidos de la cola");
         for (int i = 0; i < 10; i++) {
             ArrayConstructores[i] = new Constructor();
         }
@@ -150,7 +150,7 @@ struct Balanceador {
         int Prioridad = RetornaPrioridad(ListaClientes, PedidoActual->primerNodo->siguiente->lista->primerNodo->dato);
 
         //Funcionamiento
-        cout << "Se esta procesando el pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << endl;
+        Bitacora->agregar("\t\tBitacora");
         Bitacora->agregar("Pedido:\t\t" + PedidoActual->primerNodo->lista->primerNodo->dato);
         Bitacora->agregar("Cliente:\t\t" + PedidoActual->primerNodo->siguiente->lista->primerNodo->dato);
         PedidoActual->agregar("Bitacora", Bitacora);
@@ -167,7 +167,7 @@ struct Balanceador {
             PedidoInstantaneo.push(PedidoActual);
         }else if (PedidoActual->primerNodo->siguiente->siguiente == NULL)
         // TODO Codigo que mueve archivos a error, no es un pedido
-        cout << "Se metio el pedido a la cola" << endl;
+        cout << "Se metio el pedido" << PedidoActual->primerNodo->lista->primerNodo->dato << " a la cola de pedidos" << endl;
     }
 
     void MetePedidoEncolaThread(bool * isRunning){
@@ -220,7 +220,6 @@ struct Balanceador {
         string CodigoProducto = ProductoBuscado -> lista -> primerNodo -> dato;
         ProductoBuscado->lista->primerNodo->siguiente->dato = "0";
         Constructor * ConstructorValido = RetornaConstructorValido(ProductoBuscado->lista->primerNodo->siguiente->siguiente->dato);
-        // TODO llamar por medio de thread
         ConstructorValido->Disponibilidad = false;
         std::thread hilo(&Constructor::AgregarCantidadAlProducto, ConstructorValido, CodigoProducto, ProductosNecesitados);
         hilo.detach();
@@ -230,28 +229,33 @@ struct Balanceador {
     void validarFinalPedido(queue<Constructor*> * ConstructoresUsados, ListaCompleja * PedidoActual){
         //Esta funcion valida si el pedido se completo, si no se completo, sigue loopeando hasta que lo este
         // Solo llamar por medio de thread
-        cout << "ESTADO COLA:  " << ConstructoresUsados->size() << endl;
+        //cout << "ESTADO COLA:  " << ConstructoresUsados->size() << endl;
         while (!ConstructoresUsados->empty()){
             if (ConstructoresUsados->front()->Disponibilidad == true){
                 ConstructoresUsados->pop();
             }
         }
         if (ConstructoresUsados->empty()){
-            cout << "El pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << ". Ha sido procesado" << endl;
+
+            //cout << "El pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << ". Ha sido procesado" << endl;
+            ListaSimple* Bitacora = PedidoActual->Buscar("\t\tBitacora")->lista;
+            Bitacora->agregar("A cola de alisto:\t\t" + HoraSistema());
+            Bitacora->imprimir();
             pedidosAlmacen->push(PedidoActual);
         }
     }
 
-    void VerificaProductos(int cantidad, queue<Constructor*> * ConstructoresUsados, string CodigoProducto){
+    void VerificaProductos(int cantidad, queue<Constructor*> * ConstructoresUsados, string CodigoProducto, ListaSimple* Bitacora){
         //Verifica que hayan productos en el almacen si no pone los constructores a trabajar
         NodoComplejo * ProductoBuscado = ListaProductos->Buscar(CodigoProducto);
         if (cantidad < 0){
-            cout << "No hay suficientes productos: " << CodigoProducto << " por lo tanto se construiran" << endl;
+            //cout << "No hay suficientes productos: " << CodigoProducto << " por lo tanto se construiran" << endl;
             cantidad = -cantidad;
-            ConstructoresUsados->push(ConstruirProductos(cantidad, ProductoBuscado));
-            ConstructoresUsados->front()->imprimir();
+            Constructor * Constructor = ConstruirProductos(cantidad, ProductoBuscado);
+            ConstructoresUsados->push(Constructor);
+            Bitacora->agregar("A robot " + Constructor->Nombre + ":\t" + HoraSistema() + " Faltaban "  + to_string(cantidad) + " de " + CodigoProducto);
+            Bitacora->imprimir();
         }else if (cantidad >= 0){
-            cout << "Se esta procesando el producto: " << CodigoProducto << endl;
             ProductoBuscado->lista->primerNodo->siguiente->dato = to_string(cantidad);
         }
     }
@@ -259,13 +263,16 @@ struct Balanceador {
     void IniciaPedido(){
         //Esta funcion inicia el pedido, si no hay pedidos en las colas, no hace nada
         ListaCompleja * PedidoActual = RetornaPedido();
-        queue<Constructor*> * ConstructoresUsados = new queue<Constructor*>();
         if (PedidoActual == NULL){
             //cout << "No hay pedidos en las colas" << endl;
             return; 
         }
+        ListaSimple* Bitacora = PedidoActual->Buscar("\t\tBitacora")->lista;
+        Bitacora->agregar("Balanceador:\t\t" + HoraSistema());
+        Bitacora->imprimir();
+        queue<Constructor*> * ConstructoresUsados = new queue<Constructor*>();
         NodoComplejo * tmp= PedidoActual->primerNodo->siguiente->siguiente;
-        cout << "El pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << ". Esta siendo procesado" << endl;
+        //cout << "El pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << ". Esta siendo procesado" << endl;
         while (tmp != NULL && tmp -> tipo != "Bitacora"){
             //Variables
             NodoSimple * tmp2 = tmp -> lista -> primerNodo;
@@ -273,7 +280,7 @@ struct Balanceador {
             int CantidadNecesitada = stoi(tmp2-> siguiente -> dato);
             int CantidadAlmacenada = stoi(ListaProductos->Buscar(CodigoProducto)->lista->primerNodo->siguiente->dato);
             int Res = CantidadAlmacenada - CantidadNecesitada;
-            VerificaProductos(Res, ConstructoresUsados, CodigoProducto);
+            VerificaProductos(Res, ConstructoresUsados, CodigoProducto, Bitacora);
             tmp = tmp -> siguiente;
         }
         std::thread hilo(&Balanceador::validarFinalPedido, this, ConstructoresUsados, PedidoActual);

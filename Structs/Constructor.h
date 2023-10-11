@@ -5,7 +5,7 @@ struct Constructor{
     bool Disponibilidad; // Disponibilidad del constructor
     string tipoProducto; // D Seria que esta disponible para todos los productos
     bool Prioridad = false; // Prioridad del constructor
-    string Accion = ""; // Accion que esta realizando el constructor
+    string* Accion; // Accion que esta realizando el constructor
     //constructor
     Constructor(){
         Nombre = "";
@@ -13,7 +13,7 @@ struct Constructor{
         Disponibilidad = true;
         tipoProducto = "D";
         ListaProductos = new ListaCompleja();
-        Accion = "";
+        Accion = new string("Inactivo");
     }    
     Constructor(string Nombre, int Estado, bool Disponibilidad, string tipoProducto, string prioridad, ListaCompleja* ListaProductos){
         this->ListaProductos = ListaProductos;
@@ -24,17 +24,10 @@ struct Constructor{
         if (prioridad == "S"){
             Prioridad = true;
         }
-
+        Accion = new string("Inactivo");
     }
 
     //Metodos
-    void imprimirAccion(){
-        cout << "Constructor: " << Nombre << "\n";
-        if (Accion == "")
-            cout << "No esta realizando ninguna accion" << "\n";
-        else
-            cout << "Accion" << Accion << "\n";
-    }
 
     void imprimir(){
         cout << Nombre << "\n";
@@ -55,9 +48,11 @@ struct Constructor{
         int TiempoTotal = tiempoDeElboracion * Cantidad;
 
         //Proceso
-        cout << Nombre << " esta elaborando " << Cantidad << " de productos" << Codigo << "\n";
+        //cout << Nombre << " esta elaborando " << Cantidad << " de productos" << Codigo << "\n";
+        *Accion = "Elaborando " + to_string(Cantidad) + " de productos " + Codigo;
         Disponibilidad = false;
         std::this_thread::sleep_for(std::chrono::seconds(TiempoTotal));
-        cout << Nombre << " ha terminado de elaborar " << Cantidad << " de productos" << Codigo << "\n";
+        //cout << Nombre << " ha terminado de elaborar " << Cantidad << " de productos" << Codigo << "\n";
+        *Accion = "Inactivo, recientemente Ha terminado de elaborar " + to_string(Cantidad) + " de productos " + Codigo;
         Disponibilidad = true;
 }};
