@@ -1,0 +1,13 @@
+		Bitacora
+Pedido:		5
+Cliente:		001
+Cola:		 Alta Prioridad - 11/9/2023 23:37:4
+Balanceador:		11/9/2023 23:37:9
+A cola de alisto:		11/9/2023 23:37:9
+A empaque:		11/9/2023 23:37:28
+Finalizado:		11/9/2023 23:37:32
+		Robots Fabrica
+Alistando:		
+Alistador 1
+C07	Ubicacion: A09	Tiempo: 9s
+

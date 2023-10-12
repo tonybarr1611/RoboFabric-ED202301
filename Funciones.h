@@ -157,3 +157,24 @@ void LeerPedidosThread(string Directorio, bool * Isrunning, ListaSimple* ListaPe
     }
 }
 
+std::string quitarEspacios(string cadena) {
+    std::string resultado = "";
+    for (char caracter : cadena) {
+        if (caracter != ' ') {
+            resultado += caracter;
+        }
+    }
+    return resultado;
+}
+
+std::string reemplazarCaracter(string cadena, string viejoCaracter, string nuevoCaracter) {
+    std::string resultado = "";
+    for (char caracter : cadena) {
+        if (caracter == viejoCaracter[0]) {
+            resultado += nuevoCaracter;
+        } else {
+            resultado += caracter;
+        }
+    }
+    return resultado;
+}

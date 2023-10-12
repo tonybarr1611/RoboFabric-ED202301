@@ -34,7 +34,8 @@ int RetornaPrioridad(ListaCompleja *, string);
 string nombreArchivo(string);
 bool MoverArchivotxt(string, string);
 void EscribirArchivo(string, string);
-// Estructuras 
+string quitarEspacios(string);
+string reemplazarCaracter(string, string, string);
 struct NodoSimple {
     // NodoSimple es un nodo de ListaSimple
     string dato;
@@ -324,8 +325,8 @@ struct Cola{
 
 #include "Structs/Balanceador.h"
 
-#include "Funciones.h"
+#include "Structs/Facturador.h"
 
-#include "Facturador.h"
+#include "Funciones.h"
 
 #include "Menu.h"

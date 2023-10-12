@@ -37,8 +37,6 @@ void Menu(){
         Alistadores->push(alistador);
     }
 
-    balanceador->Comprueba_prioridad();
-
     std::thread LeePedidos(LeerPedidosThread, "Pedidos/Pendientes", std::ref(isRunning), std::ref(ListaNombresPedidos));
     LeePedidos.detach();
 

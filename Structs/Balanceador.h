@@ -4,7 +4,6 @@ struct Balanceador {
     queue<ListaCompleja*> Bajaprioridad;
     queue<ListaCompleja*> PedidoInstantaneo;
     queue<ListaCompleja*> * pedidosAlmacen;
-    queue<Constructor*> Constructores_Prioridad = queue<Constructor*>();
     ListaCompleja * ListaProductos;
     ListaCompleja * ListaClientes;
     ListaSimple * ListaPedidos;
@@ -51,16 +50,12 @@ struct Balanceador {
         else
             ArrayConstructores[Posicion]->Prioridad = false;
         
-    }
-
-    
+    }   
 
     void ModificaConstructorTipo(int Posicion, string Tipo){
         //Esta funcion modifica el tipo de producto que puede construir el constructor
         ArrayConstructores[Posicion]->tipoProducto = Tipo;
     }	
-
-    
 
     void ModificaConstructorEstado(int posicion){
         //Esta funcion modifica el estado del constructor
@@ -79,15 +74,6 @@ struct Balanceador {
             cout << "Posicion: " << i << endl;
             ArrayConstructores[i]->imprimir();
             cout << endl;
-        }
-    }
-    void Comprueba_prioridad(){
-        //Esta funcion comprueba la prioridad de los constructores
-        for (int i = 0; i < 10; i++){
-            if (ArrayConstructores[i]->Prioridad == true){
-                cout << "Se encontro un constructor con prioridad" << endl;
-                Constructores_Prioridad.push(ArrayConstructores[i]);
-            }
         }
     }
     void CargaConstructores(ListaCompleja* ListaConstructores){
@@ -124,7 +110,7 @@ struct Balanceador {
             return NULL;
         }
         string definer = EncuentraErrorPedido(Listapedidos->primerNodo);
-        cout << nombreArchivo(Listapedidos->primerNodo->dato) << endl;
+        //cout << nombreArchivo(Listapedidos->primerNodo->dato) << endl;
         if (definer == "true"){
             MoverArchivotxt("Pedidos/Pendientes/" + nombreArchivo(Listapedidos->primerNodo->dato), "Pedidos/Procesados");
             ListaPedidos->primerNodo->dato = "Pedidos/Procesados/" + nombreArchivo(Listapedidos->primerNodo->dato);
@@ -145,7 +131,6 @@ struct Balanceador {
             return;
         ListaPedidos->eliminarinicio();
         //Variables
-        PedidoActual->imprimir();
         ListaSimple * Bitacora = new ListaSimple();
         int Prioridad = RetornaPrioridad(ListaClientes, PedidoActual->primerNodo->siguiente->lista->primerNodo->dato);
 
@@ -162,14 +147,11 @@ struct Balanceador {
             Bitacora->agregar("Cola:\t\t Baja Prioridad - " + HoraSistema());
             Bajaprioridad.push(PedidoActual);
         }else if (Prioridad == 11){
-            cout << "Se metio a la cola de pedido instantaneo" << endl;
+            //cout << "Se metio a la cola de pedido instantaneo" << endl;
             Bitacora->agregar("Cola:\t\t Pedido Instantaneo - " + HoraSistema());
             PedidoInstantaneo.push(PedidoActual);
-        }else if (PedidoActual->primerNodo->siguiente->siguiente == NULL)
-        // TODO Codigo que mueve archivos a error, no es un pedido
-        cout << "Se metio el pedido" << PedidoActual->primerNodo->lista->primerNodo->dato << " a la cola de pedidos" << endl;
+        }
     }
-
     void MetePedidoEncolaThread(bool * isRunning){
         while (* isRunning){
             MetePedidoEncola();
@@ -196,23 +178,20 @@ struct Balanceador {
     Constructor * RetornaConstructorValido(string tipoProducto){
         //Esta funcion retorna el constructor que se va a usar
         //Comprueba la prioridad
-        Comprueba_prioridad();
         
-        while (Constructores_Prioridad.empty() == false){
-            if (Constructores_Prioridad.front()->tipoProducto == tipoProducto && Constructores_Prioridad.front()->Disponibilidad == true && Constructores_Prioridad.front()->Estado == 1){
-                return Constructores_Prioridad.front();
-            }else if (Constructores_Prioridad.front()->tipoProducto == "D" && Constructores_Prioridad.front()->Disponibilidad == true && Constructores_Prioridad.front()->Estado == 1){
-                return Constructores_Prioridad.front();
-            }
+        for (int i = 0; i < 10; i++){
+            if (ArrayConstructores[i]->Prioridad == true && ArrayConstructores[i]->tipoProducto == tipoProducto && ArrayConstructores[i]->Disponibilidad == true)
+                return ArrayConstructores[i];
+            else if (ArrayConstructores[i]->Prioridad == true && ArrayConstructores[i]->tipoProducto == "D" && ArrayConstructores[i]->Disponibilidad == true)
+                return ArrayConstructores[i];
         }
         
         for (int i = 0; i < 10; i++){
-            if (ArrayConstructores[i]->tipoProducto == tipoProducto && ArrayConstructores[i]->Disponibilidad == true && ArrayConstructores[i]->Estado == 1){
+            if (ArrayConstructores[i]->tipoProducto == tipoProducto && ArrayConstructores[i]->Disponibilidad == true)
                 return ArrayConstructores[i];
-            }else if (ArrayConstructores[i]->tipoProducto == "D" && ArrayConstructores[i]->Disponibilidad == true && ArrayConstructores[i]->Estado == 1){
+            else if (ArrayConstructores[i]->tipoProducto == "D" && ArrayConstructores[i]->Disponibilidad == true)
                 return ArrayConstructores[i];
             }
-        }
         return NULL;
     }
 
@@ -221,6 +200,10 @@ struct Balanceador {
         ProductoBuscado->lista->primerNodo->siguiente->dato = "0";
         Constructor * ConstructorValido = RetornaConstructorValido(ProductoBuscado->lista->primerNodo->siguiente->siguiente->dato);
         ConstructorValido->Disponibilidad = false;
+        if (ConstructorValido == NULL){
+            cout << "No hay constructores disponibles para el producto: " << CodigoProducto << endl;
+            return NULL;
+        }
         std::thread hilo(&Constructor::AgregarCantidadAlProducto, ConstructorValido, CodigoProducto, ProductosNecesitados);
         hilo.detach();
         return ConstructorValido;
@@ -245,13 +228,16 @@ struct Balanceador {
         }
     }
 
-    void VerificaProductos(int cantidad, queue<Constructor*> * ConstructoresUsados, string CodigoProducto, ListaSimple* Bitacora){
+    void VerificaProductos(int cantidad, queue<Constructor*> * ConstructoresUsados, string CodigoProducto, ListaSimple* Bitacora, ListaSimple* ConstructorBitacora){
         //Verifica que hayan productos en el almacen si no pone los constructores a trabajar
         NodoComplejo * ProductoBuscado = ListaProductos->Buscar(CodigoProducto);
         if (cantidad < 0){
             //cout << "No hay suficientes productos: " << CodigoProducto << " por lo tanto se construiran" << endl;
             cantidad = -cantidad;
+            int Tiempo = stoi(ProductoBuscado->lista->primerNodo->siguiente->siguiente->dato)*cantidad;
             Constructor * Constructor = ConstruirProductos(cantidad, ProductoBuscado);
+            ConstructorBitacora->agregar("ARTICULO " + CodigoProducto + "\n" + "Tiempo de fabricacion: " + to_string(Tiempo) + " segundos" + "\n" + "Hora de inicio: " + HoraSistema());
+            ConstructorBitacora->imprimir();
             ConstructoresUsados->push(Constructor);
             Bitacora->agregar("A robot " + Constructor->Nombre + ":\t" + HoraSistema() + " Faltaban "  + to_string(cantidad) + " de " + CodigoProducto);
             Bitacora->imprimir();
@@ -270,6 +256,9 @@ struct Balanceador {
         ListaSimple* Bitacora = PedidoActual->Buscar("\t\tBitacora")->lista;
         Bitacora->agregar("Balanceador:\t\t" + HoraSistema());
         Bitacora->imprimir();
+        ListaSimple* ConstructorBitacora = new ListaSimple();
+        ConstructorBitacora->agregar("\t\tRobots Fabrica");
+        PedidoActual->agregar("Bitacora", ConstructorBitacora);
         queue<Constructor*> * ConstructoresUsados = new queue<Constructor*>();
         NodoComplejo * tmp= PedidoActual->primerNodo->siguiente->siguiente;
         //cout << "El pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << ". Esta siendo procesado" << endl;
@@ -280,7 +269,7 @@ struct Balanceador {
             int CantidadNecesitada = stoi(tmp2-> siguiente -> dato);
             int CantidadAlmacenada = stoi(ListaProductos->Buscar(CodigoProducto)->lista->primerNodo->siguiente->dato);
             int Res = CantidadAlmacenada - CantidadNecesitada;
-            VerificaProductos(Res, ConstructoresUsados, CodigoProducto, Bitacora);
+            VerificaProductos(Res, ConstructoresUsados, CodigoProducto, Bitacora, ConstructorBitacora);
             tmp = tmp -> siguiente;
         }
         std::thread hilo(&Balanceador::validarFinalPedido, this, ConstructoresUsados, PedidoActual);

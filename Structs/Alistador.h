@@ -40,13 +40,20 @@ struct Alistador{
 
     void Alistar(){
         NodoComplejo * tmp = pedido->primerNodo->siguiente->siguiente;
+        ListaSimple* Bitacora = new ListaSimple();
+        Bitacora->agregar("Alistando:\t\t");
+        string god = "Alistador " + to_string(id) + "\n";
         while (tmp != NULL && tmp->tipo != "Bitacora"){
             Producto * producto = new Producto(listaProductos->Buscar(tmp->lista->primerNodo->dato)->lista);
             int tiempo = calcularTiempo(producto->ubicacion);
-            cout << "Alistando " << producto->codigo << " en " << tiempo << " segundos" << endl;
+            //cout << "Alistando " << producto->codigo << " en " << tiempo << " segundos" << endl;
+            god += producto->codigo + "\t" + "Ubicacion: " + producto->ubicacion + "\t" + "Tiempo: " + to_string(tiempo) + "s\n";
             std::this_thread::sleep_for(std::chrono::seconds(tiempo));
             tmp = tmp->siguiente;
         }
+        Bitacora->agregar(god);
+        Bitacora->imprimir();
+        pedido->agregar("Bitacora", Bitacora);
         Alistados->push(pedido);
         Alistadores->push(this);
     }
