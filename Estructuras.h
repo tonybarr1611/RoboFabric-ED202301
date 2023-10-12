@@ -21,7 +21,7 @@ struct Almacen;
 struct Alistador;
 struct Bodega;
 struct Balanceador;
-
+struct Facturador;
 // Declaraciones de Funciones
 string HoraSistema();
 ListaSimple *SepararStringsPorTabs(string);
@@ -325,5 +325,7 @@ struct Cola{
 #include "Structs/Balanceador.h"
 
 #include "Funciones.h"
+
+#include "Facturador.h"
 
 #include "Menu.h"

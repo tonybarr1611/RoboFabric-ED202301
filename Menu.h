@@ -12,7 +12,7 @@ void Menu(){
 
 // Implementacion balanceador y creacion de la lista de pedidos
     ListaSimple *ListaNombresPedidos = LeerDirectorio("Pedidos//Pendientes", "txt"); // Por medio de esta lista simple podemos mandar los pedidos a balanceador
-    //Colas del balanceador
+    //Colas
     queue<ListaCompleja*> Altaprioridad;
     queue<ListaCompleja*> Bajaprioridad;
     queue<ListaCompleja*> PedidoInstantaneo;
@@ -20,18 +20,18 @@ void Menu(){
     queue<ListaCompleja*> * paraAlisto = new queue<ListaCompleja*>;
     queue<Alistador*> * Alistadores = new queue<Alistador*>;
     queue<ListaCompleja*> * Alistados = new queue<ListaCompleja*>;
-    queue<ListaCompleja*> * Empacados = new queue<ListaCompleja*>;
+    queue<ListaCompleja*> * PorFacturar = new queue<ListaCompleja*>;
 
-    //Cuando se crea el balanceador tiene todos sus constructores con categoria D 
     ListaCompleja* listaConstructores = LeerArchivo("Constructores", "txt", "Constructor");
     Almacen * almacen = new Almacen(listaDeProductos, paraAlisto);
     pedidosAlmacen = &(almacen->pedidos);
     Balanceador * balanceador = new Balanceador(1, listaDeProductos, Altaprioridad, Bajaprioridad, PedidoInstantaneo, pedidosAlmacen, ListaClientes, ListaNombresPedidos);
     balanceador->CargaConstructores(listaConstructores);
-    
     Bodega * bodega = new Bodega(listaDeProductos, paraAlisto, Alistadores);
-    Empacador * empacador = new Empacador(true, Empacados);
-    Alistados = &(empacador->PorEmpacar);
+    Empacador * empacador = new Empacador(true, Alistados, PorFacturar);
+    Facturador * facturador = new Facturador(PorFacturar);
+    Alistados = (empacador->PorEmpacar);
+    
     for (int i = 0; i < 6; i++){
         Alistador * alistador = new Alistador(true, i+1, listaDeProductos, Alistadores, Alistados);
         Alistadores->push(alistador);
@@ -56,6 +56,9 @@ void Menu(){
 
     std::thread EmpacarPedido(&Empacador::EmpacarPedidosThread, empacador, std::ref(isRunning));
     EmpacarPedido.detach();
+
+    std::thread FacturarPedido(&Facturador::FacturarPedidoThread, facturador, std::ref(isRunning));
+    FacturarPedido.detach();
 
     cout << "           Bienvenido a la fabrica" << endl;
     cout << "Desde aqui podra modificar el funcionamiento de la fabrica" << endl;

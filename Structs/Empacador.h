@@ -1,6 +1,6 @@
 struct Empacador{
     bool encendido;
-    queue<ListaCompleja*> PorEmpacar;
+    queue<ListaCompleja*> * PorEmpacar;
     queue<ListaCompleja*> * PorFacturar;
     ListaCompleja * PedidoActual;
 
@@ -8,9 +8,10 @@ struct Empacador{
         encendido = true;
     }
 
-    Empacador(bool _encendido, queue<ListaCompleja*> * _PorFacturar){
+    Empacador(bool _encendido, queue<ListaCompleja*> * _PorEmpacar, queue<ListaCompleja*>* _PorFacturar){
         encendido = _encendido;
         PorFacturar = _PorFacturar;
+        PorEmpacar = _PorEmpacar;
     }
 
     void imprimir(){
@@ -29,8 +30,11 @@ struct Empacador{
     void Empacar(){
         // Solo llamar por medio de un hilo
         NodoComplejo * tmp = PedidoActual->primerNodo->siguiente->siguiente;
+        ListaSimple* Bitacora = PedidoActual->Buscar("\t\tBitacora")->lista;
+        Bitacora->agregar("A empaque:\t\t" + HoraSistema());
+        Bitacora->imprimir();
         while (tmp != NULL && tmp->tipo != "Bitacora"){
-            cout << "Empacando " << tmp->lista->primerNodo->dato << endl;
+            
             std::this_thread::sleep_for(std::chrono::seconds(1));
             tmp = tmp->siguiente;
         }
@@ -39,9 +43,9 @@ struct Empacador{
 
     void continuarPedido(){
         // Funcion que debe ejecutarse en un thread constante
-        if (!PorEmpacar.empty()){
-            ListaCompleja * pedido = PorEmpacar.front();
-            PorEmpacar.pop();
+        if (!PorEmpacar->empty()){
+            ListaCompleja * pedido = PorEmpacar->front();
+            PorEmpacar->pop();
             PedidoActual = pedido;
             std::thread hilo(Empacador::Empacar, this);
             hilo.detach();

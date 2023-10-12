@@ -79,9 +79,7 @@ struct Bodega {
             Alistadores->pop();
             // Revisar hilo
             alistador->pedido = pedido;
-            ListaSimple* Bitacora = pedido->Buscar("\t\tBitacora")->lista;
-            Bitacora->agregar("A empaque:\t\t" + HoraSistema());
-            Bitacora->imprimir();
+            
             std::thread hilo(&Alistador::Alistar, alistador);
             hilo.detach();
         }else{

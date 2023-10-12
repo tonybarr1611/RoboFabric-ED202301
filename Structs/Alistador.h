@@ -39,7 +39,6 @@ struct Alistador{
     }
 
     void Alistar(){
-        // Solo llamar por medio de un hilo
         NodoComplejo * tmp = pedido->primerNodo->siguiente->siguiente;
         while (tmp != NULL && tmp->tipo != "Bitacora"){
             Producto * producto = new Producto(listaProductos->Buscar(tmp->lista->primerNodo->dato)->lista);
