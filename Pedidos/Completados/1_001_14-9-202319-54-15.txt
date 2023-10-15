@@ -1,0 +1,18 @@
+		Bitacora
+Pedido:		1
+Cliente:		001
+Cola:		 Alta Prioridad - 14/9/2023 19:52:42
+Balanceador:		14/9/2023 19:52:47
+A robot Constructor7:	14/9/2023 19:52:47 Faltaban 25 de C07
+A cola de alisto:		14/9/2023 19:53:37
+A empaque:		14/9/2023 19:54:10
+Finalizado:		14/9/2023 19:54:14
+		Robots Fabrica
+ARTICULO C07
+Tiempo de fabricacion: 50 segundos
+Hora de inicio: 14/9/2023 19:52:47
+		Alistando
+Alistador 1
+C07	Ubicacion: A09	Tiempo: 9s
+C06	Ubicacion: B0	Tiempo: 1s
+

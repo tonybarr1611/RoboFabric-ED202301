@@ -124,7 +124,7 @@ struct Balanceador {
         return "true";
     }
     
-    ListaCompleja * ValidaArchivo(ListaSimple * Listapedidos ){
+    ListaCompleja * ValidaArchivo(ListaSimple * Listapedidos){
         //Esta funcion valida el archivo, si no hay error retorna el pedido y lo mueve a procesados, si hay error lo mueve a la carpeta de error
         if (Listapedidos->primerNodo == NULL){
             //cout << "No hay pedidos en la lista" << endl;
@@ -136,10 +136,14 @@ struct Balanceador {
             MoverArchivotxt("Pedidos/Pendientes/" + nombreArchivo(Listapedidos->primerNodo->dato), "Pedidos/Procesados");
             ListaPedidos->primerNodo->dato = "Pedidos/Procesados/" + nombreArchivo(Listapedidos->primerNodo->dato);
             return LeerArchivo(Listapedidos->primerNodo, "Pedido");
-        }else{
+        }else if(definer == "NULL"){
+            return NULL;
+        }
+        else{
             string Archivo = "Pedidos//Pendientes//" + nombreArchivo(Listapedidos->primerNodo->dato);
             EscribirArchivo(Archivo, definer);
             MoverArchivotxt("Pedidos/Pendientes/" + nombreArchivo(Listapedidos->primerNodo->dato), "Pedidos/Errores");
+            ListaPedidos->eliminarinicio();
         }
         return NULL;
     }

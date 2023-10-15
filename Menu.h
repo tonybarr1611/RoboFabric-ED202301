@@ -343,17 +343,3 @@ void Menu(){
         std::this_thread::sleep_for(std::chrono::seconds(5));
     }
 }
-    //     else if (opcion == "3"){
-    //         cout << "Ingrese el nombre del elemento que desea apagar: ";
-    //         string nombreElemento;
-    //         cin >> nombreElemento;
-    //         balanceador->ApagarElemento(nombreElemento);
-    //     }
-    //     else if (opcion == "4"){
-    //         cout << "Apagando fabrica" << endl;
-    //         *isRunning = false;
-    //     }
-    //     else{
-    //         cout << "Opcion invalida" << endl;
-    //     }
-    // }
