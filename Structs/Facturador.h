@@ -45,7 +45,6 @@ struct Facturador {
 
         ListaSimple* Bitacora = pedido->Buscar("\t\tBitacora")->lista;
         Bitacora->agregar("Finalizado:\t\t" + HoraSistema());
-        Bitacora->imprimir();
         std::this_thread::sleep_for(std::chrono::seconds(1));
         //Creacion del archivo
         string hora = quitarEspacios(reemplazarCaracter(HoraSistema(), "/", "-"));

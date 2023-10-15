@@ -253,8 +253,7 @@ struct Balanceador {
 
             //cout << "El pedido: " << PedidoActual->primerNodo->lista->primerNodo->dato << ". Ha sido procesado" << endl;
             ListaSimple* Bitacora = PedidoActual->Buscar("\t\tBitacora")->lista;
-            Bitacora->agregar("A cola de alisto:\t\t" + HoraSistema());
-            Bitacora->imprimir();
+            Bitacora->agregar("A cola de alisto:\t" + HoraSistema());
             HistorialColaAlmacen->agregar("Entra pedido: " + PedidoActual->primerNodo->lista->primerNodo->dato + " - " + HoraSistema());
             pedidosAlmacen->push(PedidoActual);
         }
@@ -274,10 +273,8 @@ struct Balanceador {
                 Constructor = ConstruirProductos(cantidad, ProductoBuscado);
             }
             ConstructorBitacora->agregar("ARTICULO " + CodigoProducto + "\n" + "Tiempo de fabricacion: " + to_string(Tiempo) + " segundos" + "\n" + "Hora de inicio: " + HoraSistema());
-            ConstructorBitacora->imprimir();
             ConstructoresUsados->push(Constructor);
             Bitacora->agregar("A robot " + Constructor->Nombre + ":\t" + HoraSistema() + " Faltaban "  + to_string(cantidad) + " de " + CodigoProducto);
-            Bitacora->imprimir();
         }else if (cantidad >= 0){
             ProductoBuscado->lista->primerNodo->siguiente->dato = to_string(cantidad);
         }
@@ -294,7 +291,6 @@ struct Balanceador {
 
         ListaSimple* Bitacora = PedidoActual->Buscar("\t\tBitacora")->lista;
         Bitacora->agregar("Balanceador:\t\t" + HoraSistema());
-        Bitacora->imprimir();
         ListaSimple* ConstructorBitacora = new ListaSimple();
         ConstructorBitacora->agregar("\t\tRobots Fabrica");
         PedidoActual->agregar("Bitacora", ConstructorBitacora);

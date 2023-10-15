@@ -25,7 +25,7 @@ struct Bodega {
 
     // Método para imprimir la matriz
     void imprimir() {
-        cout << "Almacen: \n";
+        cout << "Bodega: \n";
         for (int i = 0; i < matriz.size(); i++) {
             for (int j = 0; j < matriz[i].size(); j++) {
                 cout <<"[" << matriz[i][j] << "]";

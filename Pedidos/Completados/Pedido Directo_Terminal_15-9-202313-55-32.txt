@@ -1,0 +1,16 @@
+		Bitacora
+Pedido:		Pedido Directo
+Cliente:		Terminal
+Balanceador:		15/9/2023 13:55:6
+A robot Constructor7:	15/9/2023 13:55:6 Faltaban 5 de C07
+A cola de alisto:	15/9/2023 13:55:11
+A empaque:		15/9/2023 13:55:29
+Finalizado:		15/9/2023 13:55:31
+		Robots Fabrica
+ARTICULO C07
+Tiempo de fabricacion: 5 segundos
+Hora de inicio: 15/9/2023 13:55:6
+		Alistando
+Alistador 3
+C07	Ubicacion: A09	Tiempo: 9s
+

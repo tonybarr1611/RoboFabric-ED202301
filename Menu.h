@@ -28,13 +28,14 @@ void Menu(){
     ListaCompleja* listaConstructores = LeerArchivo("Constructores", "txt", "Constructor");
     Balanceador * balanceador = new Balanceador(1, listaDeProductos, Altaprioridad, Bajaprioridad, PedidoInstantaneo, pedidosAlmacen, ListaClientes, ListaNombresPedidos, HistorialColaAlmacen);
     balanceador->CargaConstructores(listaConstructores);
-    Bodega * bodega = new Bodega(listaDeProductos, paraAlisto, Alistadores, ArrayAlistadores, almacen->HistorialColaAlisto);
-    
-    for (int i = 0; i < 6; i++){
+     for (int i = 0; i < 6; i++){
         Alistador * alistador = new Alistador(1, i+1, listaDeProductos, Alistadores, Alistados);
         ArrayAlistadores[i] = alistador;
         Alistadores->push(alistador);
     }
+    Bodega * bodega = new Bodega(listaDeProductos, paraAlisto, Alistadores, ArrayAlistadores, almacen->HistorialColaAlisto);
+    bodega->InsertaProductosEnAlmacen();
+   
 
     Empacador * empacador = new Empacador(1, Alistados, PorFacturar, ArrayAlistadores[0]->HistorialAlistados);
     Facturador * facturador = new Facturador(PorFacturar, empacador->HistorialPorFacturar);
@@ -199,34 +200,36 @@ void Menu(){
             cout << "4. Cola de alistados" << endl;
             cout << "5. Cola de empacados" << endl;
             cout << "6. Historial de alistadores" << endl;
+            cout << "7. Historial de constructores" << endl;
             string subopcion;
             getline(cin, subopcion);
             cout << endl;
             if (subopcion == "1"){
                 cout << "Cola de pedidos" << endl;
                 balanceador->HistorialColasBalanceador->imprimir();
-            }
-            else if (subopcion == "2"){
+            }else if (subopcion == "2"){
                 cout << "Cola de almacen" << endl;
                 balanceador->HistorialColaAlmacen->imprimir();
-            }
-            else if (subopcion == "3"){
+            }else if (subopcion == "3"){
                 cout << "Cola de alistadores" << endl;
                 bodega->HistorialAlisto->imprimir();
-            }
-            else if (subopcion == "4"){
+            }else if (subopcion == "4"){
                 cout << "Cola de alistados" << endl;
                 ArrayAlistadores[0]->HistorialAlistados->imprimir();
-            }
-            else if (subopcion == "5"){
+            }else if (subopcion == "5"){
                 cout << "Cola de empacados" << endl;
                 empacador->HistorialPorFacturar->imprimir();
-            }
-            else if (subopcion == "6"){
+            }else if (subopcion == "6"){
                 cout << "Historial de alistadores" << endl;
                 for (int i = 0; i < 6; i++){
                     cout << "Alistador " << i+1 << endl;
                     ArrayAlistadores[i]->Historial->imprimir();
+                }
+            }else if (subopcion == "7"){
+                cout << "Historial de constructores" << endl;
+                for (int i = 0; i < 9; i++){
+                    cout << "Constructor " << i+1 << endl;
+                    balanceador->ArrayConstructores[i]->Historial->imprimir();
                 }
             }
             else{
@@ -274,7 +277,8 @@ void Menu(){
                 cout << facturador->Accion << endl;
             }
             else if(subopcion== "6"){
-
+                cout << "Bodega" << endl;
+                bodega->imprimir();
             }
             else{
                 cout << "Opcion invalida" << endl;
@@ -339,6 +343,46 @@ void Menu(){
             else{
                 cout << "Opcion invalida" << endl;
                 continue;
+            }
+        }
+        else if(opcion == "6"){
+            //Apaga la fabrica pero antes todo pedido debe de finalizar
+            bool apagando = true;
+
+            while (apagando){
+            bool VerificaConstructores;
+            bool VerificaAlistadores;
+            bool VerificaColas;          
+            //Verifica Constructores
+            VerificaConstructores = true;
+            for (int i = 0; i < 9; i++){
+                string Accion = balanceador->ArrayConstructores[i]->Accion;
+                if (Accion != "Esperando orden"){
+                VerificaConstructores = false;
+                break;}
+            }
+            //Verifica Alistadores
+            VerificaAlistadores = true;
+            for (int i = 0; i < 6; i++){
+                string Accion = bodega->ArrayAlistadores[i]->Accion; 
+                if( Accion != "Esperando para alistar"){
+                VerificaAlistadores = false;
+                break;}
+            }
+            VerificaColas = false;
+            if (balanceador->Altaprioridad.empty() && balanceador->Bajaprioridad.empty() && balanceador->PedidoInstantaneo.empty() && balanceador->pedidosAlmacen->empty() == true && bodega->paraAlisto->empty() && empacador->PorEmpacar->empty() && facturador->PorFacturar->empty()){
+            VerificaColas = true;    
+            }
+            
+            if (VerificaColas && VerificaConstructores && VerificaAlistadores){
+                cout << "Apagando fabrica" << endl;
+                std::this_thread::sleep_for(std::chrono::seconds(3));
+                *isRunning = false;
+                apagando = false;
+            }else{
+                cout << "Aun faltan pedidos por atender, no se puede apagar" << endl; 
+                std::this_thread::sleep_for(std::chrono::seconds(10));
+            }
             }
         }
         else{

@@ -6,6 +6,7 @@ struct Constructor{
     string tipoProducto; // D Seria que esta disponible para todos los productos
     bool Prioridad = false; // Prioridad del constructor
     string Accion; // Accion que esta realizando el constructor
+    ListaSimple * Historial; // Historial de lo que ha hecho el constructor
     //constructor
     Constructor(){
         Nombre = "";
@@ -14,6 +15,7 @@ struct Constructor{
         tipoProducto = "D";
         ListaProductos = new ListaCompleja();
         Accion = "Esperando orden";
+        Historial = new ListaSimple();
     }    
     Constructor(string Nombre, int Estado, bool Disponibilidad, string tipoProducto, string prioridad, ListaCompleja* ListaProductos){
         this->ListaProductos = ListaProductos;
@@ -25,6 +27,7 @@ struct Constructor{
             Prioridad = true;
         }
         Accion = "Esperando orden";
+        Historial = new ListaSimple();
     }
 
     //Metodos
@@ -54,10 +57,11 @@ struct Constructor{
         //Proceso
         //cout << Nombre << " esta elaborando " << Cantidad << " de productos" << Codigo << "\n";
         Accion = "Elaborando " + to_string(Cantidad) + " de productos " + Codigo;
+        Historial->agregar(Accion); 
         Disponibilidad = false;
         std::this_thread::sleep_for(std::chrono::seconds(TiempoTotal));
         //cout << Nombre << " ha terminado de elaborar " << Cantidad << " de productos" << Codigo << "\n";
-        Accion = "Esperando orden, recientemente ha terminado de elaborar " + to_string(Cantidad) + " de productos " + Codigo;
+        Accion = "Esperando orden";
         Disponibilidad = true;
     }
 

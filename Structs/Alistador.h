@@ -67,7 +67,6 @@ struct Alistador{
         }
         Accion = "Esperando para alistar";
         Bitacora->agregar(god);
-        Bitacora->imprimir();
         pedido->agregar("Bitacora", Bitacora);
         Alistados->push(pedido);
         HistorialAlistados->agregar("Entra pedido: " + pedido->primerNodo->lista->primerNodo->dato + " - " + HoraSistema());

@@ -63,7 +63,6 @@ struct Almacen{
 
         if (!pedidos.empty()){
             ListaCompleja * pedido = pedidos.front();
-            pedido->imprimir();
             paraAlisto->push(pedido);
             HistorialColaAlisto->agregar("Entra pedido: " + pedido->primerNodo->lista->primerNodo->dato + " - " + HoraSistema());
             pedidos.pop();

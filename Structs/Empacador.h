@@ -44,7 +44,6 @@ struct Empacador{
         NodoComplejo * tmp = PedidoActual->primerNodo->siguiente->siguiente;
         ListaSimple* Bitacora = PedidoActual->Buscar("\t\tBitacora")->lista;
         Bitacora->agregar("A empaque:\t\t" + HoraSistema());
-        Bitacora->imprimir();
         while (tmp != NULL && tmp->tipo != "Bitacora"){
             
             std::this_thread::sleep_for(std::chrono::seconds(1));
