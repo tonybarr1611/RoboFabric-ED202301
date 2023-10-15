@@ -285,15 +285,13 @@ struct Balanceador {
 
     void IniciaPedido(){
         //Esta funcion inicia el pedido, si no hay pedidos en las colas, no hace nada
-        ListaCompleja * PedidoActual = RetornaPedido();
-        if (PedidoActual == NULL){
-            //cout << "No hay pedidos en las colas" << endl;
-            return; 
-        }
-        if (Estado == 0){
-            //cout << "El balanceador esta apagado" << endl;
+        if (Estado == 0)
             return;
-        }
+        
+        ListaCompleja * PedidoActual = RetornaPedido();
+        if (PedidoActual == NULL)
+            return; 
+
         ListaSimple* Bitacora = PedidoActual->Buscar("\t\tBitacora")->lista;
         Bitacora->agregar("Balanceador:\t\t" + HoraSistema());
         Bitacora->imprimir();
