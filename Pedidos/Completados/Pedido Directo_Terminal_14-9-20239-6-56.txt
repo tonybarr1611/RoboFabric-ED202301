@@ -1,0 +1,12 @@
+		Bitacora
+Pedido:		Pedido Directo
+Cliente:		Terminal
+Balanceador:		14/9/2023 9:6:31
+A cola de alisto:		14/9/2023 9:6:31
+A empaque:		14/9/2023 9:6:51
+Finalizado:		14/9/2023 9:6:55
+		Robots Fabrica
+		Alistando
+Alistador 1
+C07	Ubicacion: A09	Tiempo: 9s
+

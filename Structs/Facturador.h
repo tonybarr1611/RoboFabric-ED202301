@@ -1,15 +1,20 @@
 struct Facturador {
     queue<ListaCompleja *> * PorFacturar;
-    bool Estado;
-
+    int Estado;
+    string Accion;
+    ListaSimple * HistorialPorfacturar;
     //Constructor
     Facturador() {
-        Estado = true;
+        Estado = 1;
         queue<ListaCompleja*> * PorFacturar = new queue<ListaCompleja*>;
+        Accion = "Facturando cada segundo";
+        HistorialPorfacturar = new ListaSimple();
     }
-    Facturador(queue<ListaCompleja*> * _PorFacturar) {
-        Estado = true;
+    Facturador(queue<ListaCompleja*> * _PorFacturar, ListaSimple * _HistorialPorfacturar) {
+        Estado = 1;
         PorFacturar = _PorFacturar;
+        Accion = "Facturando cada segundo";
+        HistorialPorfacturar = _HistorialPorfacturar;
     }
 
     //Metodos
@@ -18,12 +23,26 @@ struct Facturador {
         cout << "Estado: " << Estado << endl;
     }
 
+    void apagar() {
+        if (Estado== 1){
+            Estado = 0;
+            Accion = "Apagado";
+        }
+        else {
+            Estado= 1;
+            Accion = "Facturando cada segundo";
+        }
+    }
+
     void FacturaPedido(){
         // Solo llamar por medio de un hilo
+        if (Estado == 0) return;
+
         if (PorFacturar->empty())
             return;
         ListaCompleja * pedido = PorFacturar->front();
         PorFacturar->pop();
+
         ListaSimple* Bitacora = pedido->Buscar("\t\tBitacora")->lista;
         Bitacora->agregar("Finalizado:\t\t" + HoraSistema());
         Bitacora->imprimir();
@@ -38,7 +57,7 @@ struct Facturador {
         if (archivo.is_open()) {
         ListaSimple* Bitacora = pedido->Buscar("\t\tBitacora")->lista;
         ListaSimple* Bitacora_constructor = pedido->Buscar("\t\tRobots Fabrica")->lista;
-        ListaSimple* Bitacora_Alisto = pedido->Buscar("Alistando:\t\t")->lista;
+        ListaSimple* Bitacora_Alisto = pedido->Buscar("\t\tAlistando")->lista;
 
 
         //Primera Bitacora

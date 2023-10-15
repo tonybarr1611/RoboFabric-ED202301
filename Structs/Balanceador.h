@@ -7,7 +7,9 @@ struct Balanceador {
     ListaCompleja * ListaProductos;
     ListaCompleja * ListaClientes;
     ListaSimple * ListaPedidos;
-    string* Accion; 
+    string Accion; 
+    ListaSimple * HistorialColasBalanceador;
+    ListaSimple * HistorialColaAlmacen;
     int Estado = 1; // 0 = Apagado, 1 = Encendido
 
     //constructor 
@@ -24,10 +26,14 @@ struct Balanceador {
         ListaCompleja * ListaProductos = new ListaCompleja();
         ListaCompleja * ListaClientes = new ListaCompleja();
         ListaSimple * ListaPedidos = new ListaSimple();
+        pedidosAlmacen = new queue<ListaCompleja*>();
+        HistorialColasBalanceador = new ListaSimple();
+        Accion = "Leyendo Pedidos de la cola";
+        HistorialColaAlmacen = new ListaSimple();
 
     }
 
-    Balanceador(int Estado, ListaCompleja * ListaProductos, queue<ListaCompleja*> Altaprioridad, queue<ListaCompleja*> Bajaprioridad, queue<ListaCompleja*> PedidoInstantaneo, queue<ListaCompleja*> * pedidosAlmacen, ListaCompleja * ListaClientes, ListaSimple * ListaPedidos) {
+    Balanceador(int Estado, ListaCompleja * ListaProductos, queue<ListaCompleja*> Altaprioridad, queue<ListaCompleja*> Bajaprioridad, queue<ListaCompleja*> PedidoInstantaneo, queue<ListaCompleja*> * pedidosAlmacen, ListaCompleja * ListaClientes, ListaSimple * ListaPedidos, ListaSimple * _HistorialColaAlmacen) {
         this->Altaprioridad = Altaprioridad;
         this->Bajaprioridad = Bajaprioridad;
         this->PedidoInstantaneo = PedidoInstantaneo;
@@ -36,10 +42,12 @@ struct Balanceador {
         this->pedidosAlmacen = pedidosAlmacen;
         this->ListaClientes = ListaClientes;
         this->ListaPedidos = ListaPedidos;
-        Accion = new string("Leyendo Pedidos de la cola");
+        Accion = "Leyendo Pedidos de la cola";
         for (int i = 0; i < 10; i++) {
             ArrayConstructores[i] = new Constructor();
         }
+        HistorialColasBalanceador = new ListaSimple();
+        HistorialColaAlmacen = _HistorialColaAlmacen;
     }
 
     //Metodos
@@ -73,6 +81,19 @@ struct Balanceador {
         for (int i = 0; i < 10; i++){
             cout << "Posicion: " << i << endl;
             ArrayConstructores[i]->imprimir();
+            cout << endl;
+        }
+    }
+
+    void ImprimeNombreConstructores(){
+        cout << endl;
+        for (int i = 0; i < 10; i++){
+            cout << "Posicion: " << i << endl;
+            cout << ArrayConstructores[i]->Nombre << endl;
+            if (ArrayConstructores[i]->Estado == 1)
+                cout << "Prendido" << endl;
+            else 
+                cout << "Apagado" << endl;
             cout << endl;
         }
     }
@@ -143,13 +164,16 @@ struct Balanceador {
             // Recupera la hora del sistema y la agrega a la bitacora
             Bitacora->agregar("Cola:\t\t Alta Prioridad - " + HoraSistema());
             Altaprioridad.push(PedidoActual);
+            HistorialColasBalanceador->agregar("Entra pedido: " + PedidoActual->primerNodo->lista->primerNodo->dato + " - " + HoraSistema() + " a la cola de alta prioridad");
         }else if (Prioridad  < 10){
             Bitacora->agregar("Cola:\t\t Baja Prioridad - " + HoraSistema());
             Bajaprioridad.push(PedidoActual);
+            HistorialColasBalanceador->agregar("Entra pedido: " + PedidoActual->primerNodo->lista->primerNodo->dato + " - " + HoraSistema() + " a la cola de baja prioridad");
         }else if (Prioridad == 11){
             //cout << "Se metio a la cola de pedido instantaneo" << endl;
             Bitacora->agregar("Cola:\t\t Pedido Instantaneo - " + HoraSistema());
             PedidoInstantaneo.push(PedidoActual);
+            HistorialColasBalanceador->agregar("Entra pedido: " + PedidoActual->primerNodo->lista->primerNodo->dato + " - " + HoraSistema() + " a la cola de pedido instantaneo");
         }
     }
     void MetePedidoEncolaThread(bool * isRunning){
@@ -165,12 +189,15 @@ struct Balanceador {
         if (!PedidoInstantaneo.empty()){
             PedidoActual = PedidoInstantaneo.front();
             PedidoInstantaneo.pop();
+            HistorialColasBalanceador->agregar("Sale pedido: " + PedidoActual->primerNodo->lista->primerNodo->dato + " - " + HoraSistema() + " de la cola de pedido instantaneo");
         }else if (!Bajaprioridad.empty()){
             PedidoActual = Bajaprioridad.front();
             Bajaprioridad.pop();
+            HistorialColasBalanceador->agregar("Sale pedido: " + PedidoActual->primerNodo->lista->primerNodo->dato + " - " + HoraSistema() + " de la cola de baja prioridad");
         }else if (!Altaprioridad.empty()){
             PedidoActual = Altaprioridad.front();
             Altaprioridad.pop();
+            HistorialColasBalanceador->agregar("Sale pedido: " + PedidoActual->primerNodo->lista->primerNodo->dato + " - " + HoraSistema() + " de la cola de alta prioridad");
         }
         return PedidoActual;
     }
@@ -180,16 +207,16 @@ struct Balanceador {
         //Comprueba la prioridad
         
         for (int i = 0; i < 10; i++){
-            if (ArrayConstructores[i]->Prioridad == true && ArrayConstructores[i]->tipoProducto == tipoProducto && ArrayConstructores[i]->Disponibilidad == true)
+            if (ArrayConstructores[i]->Prioridad == true && ArrayConstructores[i]->tipoProducto == tipoProducto && ArrayConstructores[i]->Disponibilidad == true && ArrayConstructores[i]->Estado == 1)
                 return ArrayConstructores[i];
-            else if (ArrayConstructores[i]->Prioridad == true && ArrayConstructores[i]->tipoProducto == "D" && ArrayConstructores[i]->Disponibilidad == true)
+            else if (ArrayConstructores[i]->Prioridad == true && ArrayConstructores[i]->tipoProducto == "D" && ArrayConstructores[i]->Disponibilidad == true && ArrayConstructores[i]->Estado == 1)
                 return ArrayConstructores[i];
         }
         
         for (int i = 0; i < 10; i++){
-            if (ArrayConstructores[i]->tipoProducto == tipoProducto && ArrayConstructores[i]->Disponibilidad == true)
+            if (ArrayConstructores[i]->tipoProducto == tipoProducto && ArrayConstructores[i]->Disponibilidad == true && ArrayConstructores[i]->Estado == 1)
                 return ArrayConstructores[i];
-            else if (ArrayConstructores[i]->tipoProducto == "D" && ArrayConstructores[i]->Disponibilidad == true)
+            else if (ArrayConstructores[i]->tipoProducto == "D" && ArrayConstructores[i]->Disponibilidad == true && ArrayConstructores[i]->Estado == 1)
                 return ArrayConstructores[i];
             }
         return NULL;
@@ -224,6 +251,7 @@ struct Balanceador {
             ListaSimple* Bitacora = PedidoActual->Buscar("\t\tBitacora")->lista;
             Bitacora->agregar("A cola de alisto:\t\t" + HoraSistema());
             Bitacora->imprimir();
+            HistorialColaAlmacen->agregar("Entra pedido: " + PedidoActual->primerNodo->lista->primerNodo->dato + " - " + HoraSistema());
             pedidosAlmacen->push(PedidoActual);
         }
     }
@@ -236,6 +264,11 @@ struct Balanceador {
             cantidad = -cantidad;
             int Tiempo = stoi(ProductoBuscado->lista->primerNodo->siguiente->siguiente->dato)*cantidad;
             Constructor * Constructor = ConstruirProductos(cantidad, ProductoBuscado);
+            while (Constructor == NULL){
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                cout << "Buscando constructor para:" << CodigoProducto << endl;
+                Constructor = ConstruirProductos(cantidad, ProductoBuscado);
+            }
             ConstructorBitacora->agregar("ARTICULO " + CodigoProducto + "\n" + "Tiempo de fabricacion: " + to_string(Tiempo) + " segundos" + "\n" + "Hora de inicio: " + HoraSistema());
             ConstructorBitacora->imprimir();
             ConstructoresUsados->push(Constructor);
@@ -252,6 +285,10 @@ struct Balanceador {
         if (PedidoActual == NULL){
             //cout << "No hay pedidos en las colas" << endl;
             return; 
+        }
+        if (Estado == 0){
+            //cout << "El balanceador esta apagado" << endl;
+            return;
         }
         ListaSimple* Bitacora = PedidoActual->Buscar("\t\tBitacora")->lista;
         Bitacora->agregar("Balanceador:\t\t" + HoraSistema());
@@ -282,4 +319,18 @@ struct Balanceador {
             std::this_thread::sleep_for(std::chrono::seconds(5));
         }
     }
+
+    void ApagaBalanceador(){
+        //Esta funcion apaga el balanceador
+        if (Estado== 1){
+            Estado = 0;
+            Accion = "Apagado";
+        }
+        else {
+            Estado= 1;
+            Accion = "Leyendo Pedidos de la cola";
+        }
+    }
+
+
 };

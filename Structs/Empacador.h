@@ -1,30 +1,42 @@
 struct Empacador{
-    bool encendido;
+    int estado;
     queue<ListaCompleja*> * PorEmpacar;
     queue<ListaCompleja*> * PorFacturar;
     ListaCompleja * PedidoActual;
-
+    string Accion;
+    ListaSimple* HistorialPorempacar;
+    ListaSimple* HistorialPorFacturar;
     Empacador(){
-        encendido = true;
+        estado = 1;
+        PorEmpacar = new queue<ListaCompleja*>;
+        PorFacturar = new queue<ListaCompleja*>;
+        Accion = "Esperando para empacar";
+        HistorialPorempacar = new ListaSimple();
+        HistorialPorFacturar = new ListaSimple();
     }
 
-    Empacador(bool _encendido, queue<ListaCompleja*> * _PorEmpacar, queue<ListaCompleja*>* _PorFacturar){
-        encendido = _encendido;
+    Empacador(int _encendido, queue<ListaCompleja*> * _PorEmpacar, queue<ListaCompleja*>* _PorFacturar, ListaSimple * _HistorialPorEmpacar){
+        estado = _encendido;
         PorFacturar = _PorFacturar;
         PorEmpacar = _PorEmpacar;
+        Accion = "Empacando cada segundo";
+        HistorialPorempacar = _HistorialPorEmpacar;
+        HistorialPorFacturar = new ListaSimple();
     }
 
     void imprimir(){
         cout << "Empacador: " << endl;
-        cout << "Encendido: " << encendido << endl;
     }
 
     void apagar(){
-        encendido = false;
-    }
-
-    void encender(){
-        encendido = true;
+        if (estado== 1){
+            estado = 0;
+            Accion = "Apagado";
+        }
+        else {
+            estado= 1;
+            Accion = "Empacando cada segundo";
+        }
     }
 
     void Empacar(){
@@ -38,14 +50,17 @@ struct Empacador{
             std::this_thread::sleep_for(std::chrono::seconds(1));
             tmp = tmp->siguiente;
         }
+        HistorialPorFacturar->agregar("Entra pedido:\t"+ PedidoActual->primerNodo->lista->primerNodo->dato + "-" + HoraSistema());
         PorFacturar->push(PedidoActual);
     }
 
     void continuarPedido(){
         // Funcion que debe ejecutarse en un thread constante
+        if (estado == 0) return;
         if (!PorEmpacar->empty()){
             ListaCompleja * pedido = PorEmpacar->front();
             PorEmpacar->pop();
+            HistorialPorempacar->agregar("Sale pedido:\t"+ pedido->primerNodo->lista->primerNodo->dato + "-" + HoraSistema());
             PedidoActual = pedido;
             std::thread hilo(Empacador::Empacar, this);
             hilo.detach();
