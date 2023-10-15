@@ -105,6 +105,10 @@ void Menu(){
                 string codigoProducto;
                 getline(cin, codigoProducto);
                 cout << endl; 
+                if (listaDeProductos->Buscar(codigoProducto) == NULL){
+                    cout << "Producto no encontrado" << endl;
+                    continue;
+                }
                 cout << "Ingrese la cantidad del producto:";
                 string cantidadProducto;
                 getline(cin, cantidadProducto);
@@ -239,6 +243,7 @@ void Menu(){
             cout << "3. Alistadores" << endl;
             cout << "4. Empacador" << endl;
             cout << "5. Facturador" << endl;
+            cout << "6. Ver bodega" << endl;
             string subopcion;
             getline(cin, subopcion);
             cout << endl;
@@ -267,6 +272,9 @@ void Menu(){
             else if (subopcion == "5"){
                 cout << "Facturador" << endl;
                 cout << facturador->Accion << endl;
+            }
+            else if(subopcion== "6"){
+
             }
             else{
                 cout << "Opcion invalida" << endl;
