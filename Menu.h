@@ -354,7 +354,12 @@ void Menu(){
             while (apagando){
             bool VerificaConstructores;
             bool VerificaAlistadores;
-            bool VerificaColas;          
+            bool VerificaColas;  
+            bool VerificaEmpacador;
+            //Verifica Empacador
+            VerificaEmpacador = true;
+            if (empacador->Accion != "Esperando para empacar")
+            VerificaEmpacador = false;        
             //Verifica Constructores
             VerificaConstructores = true;
             for (int i = 0; i < 9; i++){
@@ -376,7 +381,7 @@ void Menu(){
             VerificaColas = true;    
             }
             
-            if (VerificaColas && VerificaConstructores && VerificaAlistadores){
+            if (VerificaColas && VerificaConstructores && VerificaAlistadores && VerificaEmpacador){
                 cout << "Apagando fabrica" << endl;
                 std::this_thread::sleep_for(std::chrono::seconds(3));
                 *isRunning = false;

@@ -49,6 +49,7 @@ struct Empacador{
             std::this_thread::sleep_for(std::chrono::seconds(1));
             tmp = tmp->siguiente;
         }
+        Accion = "Esperando para empacar";
         PorFacturar->push(PedidoActual);
         HistorialPorFacturar->agregar("Entra pedido:\t"+ PedidoActual->primerNodo->lista->primerNodo->dato + "-" + HoraSistema());
     }
