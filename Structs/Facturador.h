@@ -42,7 +42,7 @@ struct Facturador {
             return;
         ListaCompleja * pedido = PorFacturar->front();
         PorFacturar->pop();
-
+        HistorialPorfacturar->agregar("Sale pedido " + pedido->primerNodo->lista->primerNodo->dato + "-" + HoraSistema());
         ListaSimple* Bitacora = pedido->Buscar("\t\tBitacora")->lista;
         Bitacora->agregar("Finalizado:\t\t" + HoraSistema());
         std::this_thread::sleep_for(std::chrono::seconds(1));

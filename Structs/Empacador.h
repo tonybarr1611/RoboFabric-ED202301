@@ -15,13 +15,13 @@ struct Empacador{
         HistorialPorFacturar = new ListaSimple();
     }
 
-    Empacador(int _encendido, queue<ListaCompleja*> * _PorEmpacar, queue<ListaCompleja*>* _PorFacturar, ListaSimple * _HistorialPorEmpacar){
+    Empacador(int _encendido, queue<ListaCompleja*> * _PorEmpacar, queue<ListaCompleja*>* _PorFacturar, ListaSimple * _HistorialPorEmpacar, ListaSimple* _HistorialPorFacturar){
         estado = _encendido;
         PorFacturar = _PorFacturar;
         PorEmpacar = _PorEmpacar;
-        Accion = "Empacando cada segundo";
+        Accion = "Esperando para empacar";
         HistorialPorempacar = _HistorialPorEmpacar;
-        HistorialPorFacturar = new ListaSimple();
+        HistorialPorFacturar = _HistorialPorFacturar;
     }
 
     void imprimir(){
@@ -35,7 +35,7 @@ struct Empacador{
         }
         else {
             estado= 1;
-            Accion = "Empacando cada segundo";
+            Accion = "Esperando para empacar";
         }
     }
 
@@ -45,12 +45,12 @@ struct Empacador{
         ListaSimple* Bitacora = PedidoActual->Buscar("\t\tBitacora")->lista;
         Bitacora->agregar("A empaque:\t\t" + HoraSistema());
         while (tmp != NULL && tmp->tipo != "Bitacora"){
-            
+            Accion = "Empacando " + tmp->lista->primerNodo->dato;
             std::this_thread::sleep_for(std::chrono::seconds(1));
             tmp = tmp->siguiente;
         }
-        HistorialPorFacturar->agregar("Entra pedido:\t"+ PedidoActual->primerNodo->lista->primerNodo->dato + "-" + HoraSistema());
         PorFacturar->push(PedidoActual);
+        HistorialPorFacturar->agregar("Entra pedido:\t"+ PedidoActual->primerNodo->lista->primerNodo->dato + "-" + HoraSistema());
     }
 
     void continuarPedido(){

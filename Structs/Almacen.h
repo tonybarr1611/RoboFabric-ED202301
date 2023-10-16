@@ -2,8 +2,8 @@ struct Almacen{
     ListaCompleja *listaDeProductos;
     queue<ListaCompleja*> pedidos;
     queue<ListaCompleja*> * paraAlisto;
-    ListaSimple* HistorialColaAlmacen = new ListaSimple();
-    ListaSimple* HistorialColaAlisto = new ListaSimple();
+    ListaSimple* HistorialColaAlmacen;
+    ListaSimple* HistorialColaAlisto;
     int Estado;
     Almacen() {
         listaDeProductos = new ListaCompleja();

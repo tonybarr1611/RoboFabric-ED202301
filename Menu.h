@@ -28,17 +28,18 @@ void Menu(){
     ListaCompleja* listaConstructores = LeerArchivo("Constructores", "txt", "Constructor");
     Balanceador * balanceador = new Balanceador(1, listaDeProductos, Altaprioridad, Bajaprioridad, PedidoInstantaneo, pedidosAlmacen, ListaClientes, ListaNombresPedidos, HistorialColaAlmacen);
     balanceador->CargaConstructores(listaConstructores);
+    ListaSimple* HistorialAlistados = new ListaSimple();
      for (int i = 0; i < 6; i++){
-        Alistador * alistador = new Alistador(1, i+1, listaDeProductos, Alistadores, Alistados);
+        Alistador * alistador = new Alistador(1, i+1, listaDeProductos, Alistadores, Alistados, HistorialAlistados);
         ArrayAlistadores[i] = alistador;
         Alistadores->push(alistador);
     }
     Bodega * bodega = new Bodega(listaDeProductos, paraAlisto, Alistadores, ArrayAlistadores, almacen->HistorialColaAlisto);
     bodega->InsertaProductosEnAlmacen();
    
-
-    Empacador * empacador = new Empacador(1, Alistados, PorFacturar, ArrayAlistadores[0]->HistorialAlistados);
-    Facturador * facturador = new Facturador(PorFacturar, empacador->HistorialPorFacturar);
+    ListaSimple * HistorialPorFacturar = new ListaSimple();
+    Empacador * empacador = new Empacador(1, Alistados, PorFacturar, ArrayAlistadores[0]->HistorialAlistados, HistorialPorFacturar);
+    Facturador * facturador = new Facturador(PorFacturar, HistorialPorFacturar);
     Alistados = (empacador->PorEmpacar);
     //Lista de Acciones
 
@@ -130,6 +131,7 @@ void Menu(){
             }
             pedido->agregar("Bitacora", Bitacora);
             balanceador->PedidoInstantaneo.push(pedido);
+            balanceador->HistorialColasBalanceador->agregar("Entra pedido: " + pedido->primerNodo->lista->primerNodo->dato + " - " + HoraSistema());
         }
 
         else if (opcion == "2"){
@@ -215,10 +217,10 @@ void Menu(){
                 bodega->HistorialAlisto->imprimir();
             }else if (subopcion == "4"){
                 cout << "Cola de alistados" << endl;
-                ArrayAlistadores[0]->HistorialAlistados->imprimir();
+                empacador->HistorialPorempacar->imprimir();
             }else if (subopcion == "5"){
                 cout << "Cola de empacados" << endl;
-                empacador->HistorialPorFacturar->imprimir();
+                facturador->HistorialPorfacturar->imprimir();
             }else if (subopcion == "6"){
                 cout << "Historial de alistadores" << endl;
                 for (int i = 0; i < 6; i++){

@@ -18,14 +18,14 @@ struct Alistador{
         Accion = "Esperando para alistar";
     }
 
-    Alistador(int _encendido, int _id, ListaCompleja * _listaProductos, queue<Alistador*> * _Alistadores, queue<ListaCompleja*> * _Alistados){
+    Alistador(int _encendido, int _id, ListaCompleja * _listaProductos, queue<Alistador*> * _Alistadores, queue<ListaCompleja*> * _Alistados, ListaSimple* _HistorialAlistados){
         estado = _encendido;
         id = _id;
         listaProductos = _listaProductos;
         Alistadores = _Alistadores;
         Alistados = _Alistados;
         Accion = "Esperando para alistar";
-        HistorialAlistados = new ListaSimple();
+        HistorialAlistados = _HistorialAlistados;
         Historial = new ListaSimple();
     }
 
