@@ -141,6 +141,16 @@ void Menu(){
             string posicion;
             getline(cin, posicion);
             cout << endl;
+            bool flag = true;
+            for (int i = 0; i < posicion.length(); i++){
+                if (!isdigit(posicion[i])){
+                    cout << "Posicion invalida" << endl;
+                    flag = false;
+                    break;
+                }
+            }
+            if (!flag)
+                continue;
             int pos = stoi(posicion);
             cout << "¿Que desea modificar del constructor?" << pos << endl;
             cout << "1. Cambiar Tipo , 2. Cambiar Prioridad" << endl;
