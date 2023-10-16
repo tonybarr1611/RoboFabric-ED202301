@@ -141,16 +141,6 @@ void Menu(){
             string posicion;
             getline(cin, posicion);
             cout << endl;
-            bool flag = true;
-            for (int i = 0; i < posicion.length(); i++){
-                if (!isdigit(posicion[i])){
-                    cout << "Posicion invalida" << endl;
-                    flag = false;
-                    break;
-                }
-            }
-            if (!flag)
-                continue;
             int pos = stoi(posicion);
             cout << "¿Que desea modificar del constructor?" << pos << endl;
             cout << "1. Cambiar Tipo , 2. Cambiar Prioridad" << endl;
@@ -372,7 +362,7 @@ void Menu(){
             VerificaEmpacador = false;        
             //Verifica Constructores
             VerificaConstructores = true;
-            for (int i = 0; i < 9; i++){
+            for (int i = 0; i <= 9; i++){
                 string Accion = balanceador->ArrayConstructores[i]->Accion;
                 if (Accion != "Esperando orden"){
                 VerificaConstructores = false;
@@ -380,7 +370,7 @@ void Menu(){
             }
             //Verifica Alistadores
             VerificaAlistadores = true;
-            for (int i = 0; i < 6; i++){
+            for (int i = 0; i <= 6; i++){
                 string Accion = bodega->ArrayAlistadores[i]->Accion; 
                 if( Accion != "Esperando para alistar"){
                 VerificaAlistadores = false;
@@ -393,6 +383,34 @@ void Menu(){
             
             if (VerificaColas && VerificaConstructores && VerificaAlistadores && VerificaEmpacador){
                 cout << "Apagando fabrica" << endl;
+                //Devuelve los productos al archivos productos
+                std::ofstream archivo ("Productos//Productos.txt", std::ios::out);
+                if (archivo.is_open()){
+                    NodoComplejo * tmp = listaDeProductos->primerNodo;
+                    while(tmp != NULL){
+                        archivo << tmp->lista->primerNodo->dato << "\t" << tmp->lista->primerNodo->siguiente->dato << "\t" << tmp->lista->primerNodo->siguiente->siguiente->dato << "\t" << tmp->lista->primerNodo->siguiente->siguiente->siguiente->dato << "\t" <<   tmp->lista->primerNodo->siguiente->siguiente->siguiente->siguiente->dato  << endl;
+                        tmp = tmp -> siguiente;
+                    }
+                    archivo.close();
+                }
+                archivo = std::ofstream ("Constructores//Constructores.txt", std::ios::out);
+                if (archivo.is_open()){
+                    for (int i = 0; i <= 9; i++){
+                        string nombre = balanceador->ArrayConstructores[i]->Nombre;
+                        string tipo = balanceador->ArrayConstructores[i]->tipoProducto;
+                        bool prioridad = balanceador->ArrayConstructores[i]->Prioridad;
+                        string estado = to_string(balanceador->ArrayConstructores[i]->Estado);
+                        string stringprioridad;
+                        if (prioridad == true){
+                            stringprioridad = "S";
+                        }
+                        else{
+                            stringprioridad = "N";
+                        }
+
+                        archivo << nombre << "\t" << estado << "\t" << tipo << "\t" << stringprioridad << endl;
+                }}
+                archivo.close();
                 std::this_thread::sleep_for(std::chrono::seconds(3));
                 *isRunning = false;
                 apagando = false;
