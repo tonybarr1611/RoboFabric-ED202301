@@ -144,7 +144,7 @@ std::ofstream archivo(Archivo, std::ios::app);
 void LeerPedidosThread(string Directorio, bool * Isrunning, ListaSimple* ListaPedidos){
     //thread 
     while(*Isrunning){
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
         ListaSimple* tmp = LeerDirectorio(Directorio, "txt");
         NodoSimple* tmpNodo = tmp->primerNodo;
         while (tmpNodo != NULL){
@@ -157,3 +157,24 @@ void LeerPedidosThread(string Directorio, bool * Isrunning, ListaSimple* ListaPe
     }
 }
 
+std::string quitarEspacios(string cadena) {
+    std::string resultado = "";
+    for (char caracter : cadena) {
+        if (caracter != ' ') {
+            resultado += caracter;
+        }
+    }
+    return resultado;
+}
+
+std::string reemplazarCaracter(string cadena, string viejoCaracter, string nuevoCaracter) {
+    std::string resultado = "";
+    for (char caracter : cadena) {
+        if (caracter == viejoCaracter[0]) {
+            resultado += nuevoCaracter;
+        } else {
+            resultado += caracter;
+        }
+    }
+    return resultado;
+}

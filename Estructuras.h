@@ -5,7 +5,7 @@
 #include <chrono>
 #include <vector>
 #include <queue>
-
+#include <cctype>
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -21,7 +21,7 @@ struct Almacen;
 struct Alistador;
 struct Bodega;
 struct Balanceador;
-
+struct Facturador;
 // Declaraciones de Funciones
 string HoraSistema();
 ListaSimple *SepararStringsPorTabs(string);
@@ -34,7 +34,8 @@ int RetornaPrioridad(ListaCompleja *, string);
 string nombreArchivo(string);
 bool MoverArchivotxt(string, string);
 void EscribirArchivo(string, string);
-// Estructuras 
+string quitarEspacios(string);
+string reemplazarCaracter(string, string, string);
 struct NodoSimple {
     // NodoSimple es un nodo de ListaSimple
     string dato;
@@ -115,13 +116,12 @@ struct ListaSimple{
         return i;
     }
 
-    NodoSimple* eliminar(string Dato){
-        NodoSimple * tmp = Buscar(Dato);
-        if (lenLista() == 1){
-            primerNodo == NULL;
-            ultimoNodo = NULL;
-            return tmp;
-        }
+    NodoSimple* eliminarinicio(){
+        //Elimina el primer nodo de la lista y lo retorna
+        NodoSimple * tmp = primerNodo;
+        primerNodo = tmp -> siguiente;
+        tmp->siguiente = NULL;
+        return tmp;
         
 
     }
@@ -229,6 +229,12 @@ struct ListaCompleja{
         }
     }
 
+    void agregar(string tipo, string dato){
+        ListaSimple * lista = new ListaSimple();
+        lista -> agregar(dato);
+        agregar(new NodoComplejo(tipo, lista));
+    }
+
 
     NodoComplejo * eliminar(NodoComplejo * nodo){
         if(nodo == primerNodo){
@@ -318,6 +324,8 @@ struct Cola{
 #include "Structs/Empacador.h"
 
 #include "Structs/Balanceador.h"
+
+#include "Structs/Facturador.h"
 
 #include "Funciones.h"
 
